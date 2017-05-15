@@ -1,0 +1,231 @@
+
+@import 'variables';
+
+nav {
+    height: $nav-height;
+    background-color: $color-white;
+    padding: 0;
+
+    .header-left {
+        float: left;
+        display: table-cell;
+        padding: 10px 40px;
+    }
+    .header-right {
+        padding-right: 40px;
+
+        ul {
+            float: right;
+
+            li {
+                float: left;
+                height: $nav-height;
+                text-align: center;
+                padding:0 15px;
+                font-size: 16px;
+                a {
+                    font-family: 'gothambookregular', 'VNF-Gotham', 'Kanit', 'thejung130regular', 'Sans Serif', 'arial', 'sans-serif';
+                    color: $color-text-common;
+                    line-height: 60px;
+                    &:hover {
+                        color: $color-text-focus;
+                    }
+                    &.title-text-register {
+                        box-sizing: border-box;
+                        background-color: #158DB4;
+                        padding: 10px 20px;
+                        border-radius: 5px;
+                        color: $color-white;
+                        &:hover {
+                            background-color: #13687F;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+div.landing {
+    background-image: url(../images/background.jpg);
+    width: 100%;
+    background-size: cover;
+    min-height: 600px;
+
+    .word-wrap {
+        width: 90%;
+        color: $color-white;
+
+        margin: 0 auto;
+        text-align: center;
+        padding: 10px;
+
+        .content-topic {
+            padding-top: 35px;
+            font-size: 55px;
+
+            span.strong {
+                font-weight: 700;
+            }
+        }
+        .content-subtopic {
+            div {
+                font-size: 20px;
+                font-weight: 100;
+                padding-top: 30px;
+            }
+        }
+    }
+    .offer-box {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 600px;
+        margin: 50px auto 84px auto;
+        padding: 40px 64px;
+        border-radius: 5px;
+        background: #F2F2F2;
+        text-align: center;
+        color: #1a3c47;
+
+
+        .box-title {
+            font-size: 22px;
+        }
+        .box-subtitle {
+            padding-top: 20px;
+            font-size: 16px;
+            color: #7f7f7f;
+            margin-bottom: 25px;
+        }
+        form {
+            margin-bottom: 30px;
+            .get-email {
+                box-sizing: border-box;
+                background-color: #ffffff;
+                height: 40px;
+                width: 100%;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+                margin-bottom: 20px;
+
+                input {
+                    box-sizing: border-box;
+                    width: 100%;
+                    height: 100%;
+                    padding: 6px 12px;
+                    border: 0;
+                    border-radius: 5px;
+                    background-color: #fff;
+                    font-size: 14px;
+                }
+            }
+            button {
+                height: 40px;
+                width: 100%;
+                text-align: top;
+
+                color: #fff;
+                padding: 10px 0;
+                border: none;
+                border-radius: 5px;
+                background-color: #1baaa6;
+                & div {
+                    font-size: 12px;
+                }
+            }
+        }
+
+        div > span >a {
+            color: #1E90B4;
+            text-decoration: underline;
+            &:hover {
+                text-decoration: none;
+            }
+        }
+    }
+
+
+    // 화면 확대 축소 시 배경 바뀌게 수정
+    .how-use {
+        position: relative;
+        margin: 0;
+        padding: 50px 140px;
+        min-height: 520px;
+        box-sizing: border-box;
+        background-color: #1E90B4;
+
+        .how-use-topic {
+            color: $color-white;
+            text-align: center;
+            font-size: 22px;
+        }
+
+
+        ul.use-steps {
+            box-sizing: border-box;
+            width: 100%;
+            margin: auto;
+            padding: 30px 0;
+
+            li {
+                font-size: 16px;
+                color: $color-white;
+                text-align: center;
+                width: 20%;
+                float: left;
+                box-sizing: border-box;
+
+
+                &.step {
+                    img.step-image {
+                        width: 80%;
+                        box-sizing: border-box;
+                        padding: 40px 0 20px 0;
+                    }
+
+                    p.step-description {
+                        margin: 0;
+                        padding: 0 15px 15px 15px;
+                        font-size: 14px;
+                        font-weight: 100;
+                        line-height: 1.5rem;
+                    }
+
+                }
+
+                &.hbar {
+                    height: 300px;
+                    padding: 0 30px;
+                    top: 50%;
+                    transform: translateY(50%);
+                    text-align: center;
+
+
+                    hr {
+                        border: dotted 1px;
+                    }
+                }
+
+                span.list-number {
+                    box-sizing: border-box;
+                    // width: 38px;
+                    // height: 38px;
+                    background-color: #1BAAA6;
+                    text-align: center;
+                    padding: 0.5rem 0.8rem;
+                    border-radius: 20px;
+                }
+
+                span.how-use-subtopic {
+                    @extend .how-use-topic;
+                    font-size: 16px;
+                }
+
+
+            }
+
+        }
+
+    }
+
+}

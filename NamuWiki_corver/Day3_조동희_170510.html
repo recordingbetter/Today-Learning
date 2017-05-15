@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Python - 나무위키</title>
+    <!-- <link rel="stylesheet" href="styl.css"> -->
+    <style media="screen">
+        html {
+            font-size: 16px;
+        }
+
+        body {
+            font-size: 0.9rem;
+            margin: 0;
+            padding: 0.7rem;
+            font-family: "Open Sans", arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', '본고딕', 'KoPubDotum Medium', '나눔바른고딕', '나눔고딕', 'NanumGothic', '맑은고딕', 'Malgun Gothic', sans-serif;
+        }
+
+        a {
+            color: #0275d8;
+            text-decoration: none;
+        }
+
+        ul, ol {
+            -webkit-padding-start: 20px;
+            line-height: 1.5rem;
+
+        }
+
+        table {
+            border: 1px solid #dddddd;
+            border-collapse: collapse;
+            width: 100%;
+            white-space: pre-wrap;
+            margin-bottom: 20px;
+        }
+
+        td {
+            padding: 0.5rem;
+            background-color: #F5F5F5
+        }
+
+        div.modifiedTimeStamp {
+            text-align: right;
+        }
+
+        div.category {
+            list-style: disc;
+        }
+
+        .alter * {
+            vertical-align: middle;
+        }
+
+        .alter {
+            margin-bottom: 0.5rem;
+        }
+
+        table.doc-info {
+            border: 1px solid gray;
+            border-top: 5px solid #00a495;
+            /*width: 100%;
+            white-space: pre-wrap;
+            margin-bottom: 20px;*/
+        }
+
+        table.doc-info * {
+            background-color: #FFFFFF;
+            /*display: inline-block;*/
+            vertical-align: middle;
+            /*display: table-column;*/
+        }
+
+        table.doc-info img {
+            align-content: center;
+            background-position: center center;
+        }
+
+        table.doc-info td:nth-child(1) {
+            width: 40px;
+            vertical-align: middle;
+            background-position: center center;
+            border-right: none;
+            /*display: ;*/
+            /*padding: 9px;*/
+        }
+
+        table.doc-info td:nth-child(2) {
+
+            border-left: none;
+            /*display: ;*/
+            /*padding: 9px;*/
+        }
+
+        span.doc-info-span {
+            text-align: left;
+            padding: 9px;
+        }
+
+        table#ranking {
+            width: 100%;
+            text-align: center;
+            /*empty-cells: show;*/
+            /*border-collapse: collapse;*/
+            margin-bottom: 20px;
+        }
+
+        table#ranking th, td {
+            border: 1px solid #dddddd;
+        }
+
+        table#ranking th {
+            color: White;
+            font-weight: bold;
+            background-color: deepskyblue;
+            padding: 7px;
+        }
+
+        table#ranking td {
+            padding: 7px;
+        }
+
+        tr#ranking-bold * {
+            font-weight: bold;
+            border-bottom: none;
+            background-color: #E0FFFF;
+        }
+
+        tr#ranking-white * {
+            background-color: #FFFFFF;
+        }
+
+        tr#ranking-last * {
+                border-top: none;
+                background-color: #E0FFFF;
+        }
+
+        .blockquote_green {
+            border: 2px dashed #ccc;
+            border-left: 5px solid #71BC6D;
+            line-height: 1.3rem;
+            font-weight: bold;
+            white-space: pre-line;
+            padding: 0;
+            padding-left: 10px;
+            margin-bottom: 20px;
+        }
+
+        .blockquote_blue {
+            border: 2px dashed #ccc;
+            border-left: 5px solid #609aff;
+            line-height: 1.3rem;
+            font-weight: bold;
+            /*white-space: pre-line;*/
+            /*padding: 10px;*/
+            /*padding-left: 10px;*/
+            margin-bottom: 10px;
+            margin-top: 10px;
+        }
+
+        .blue-box {
+            background-color: #c4dcff;
+            text-align: center;
+        }
+
+        .list {
+            border: 1px solid #dddddd;
+            width: 500px;
+        }
+
+        .list > h3, ol * {
+            margin-left: 20px;
+        }
+
+    </style>
+
+
+</head>
+<body>
+    <h1>Python</h1>
+    <div class="modifiedTimeStamp">
+        <p>최근 수정 시각: 2017-05-04 18:14:42+0900</p>
+    </div>
+    <div class="category">
+        <ul>
+            <li>관련 문서:
+                <a href="#">객체 지향 프로그래밍,</a>
+                <a href="#">비단뱀</a>
+            </li>
+        </ul>
+    </div>
+    <div class="alter">
+        <img src="https://cdn.namuwikiusercontent.com/0d/0d333d7a376060af53affcb373858ee68e818158739163322afc97a0066cf691.png?e=1503045285&k=fHKfi1QysqXEI-Yh-cwb4Q" alt="참고" class="arrow" width="22" height="22">
+        <span>다른 의미의 Python에 대해서는 <a href="#">파이선</a> 문서를 참고하십시오.</span>
+    </div>
+
+    <table class="doc-info">
+        <tr>
+            <td style="width:50"><img src="https://cdn.namuwikiusercontent.com/47/471f3dab3663c630a6aa5ffaef8675bf755c4efd81a2d5c2cb78ef7b7e3c9cd5.png?e=1495799570&k=7_owif9kiUnb2UOJOfahhw" alt="정보" width="40"></td>
+            <td><span class="doc-info span"><b>이 문서는 <a href="#">나무위키 컴퓨터 프로젝트</a>에서 다루는 문서입니다.</b></span>
+<span class="doc-info span">해당 프로젝트 문서를 방문해 도움이 필요한 문서에 기여해 주세요!</span></td>
+        </tr>
+    </table>
+
+    <table id="ranking">
+        <thead>
+            <tr>
+                <th colspan=5>TIOBE에서 선정한 프로그래밍 언어 월간 점유율 순위 (2017 4월 기준)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan=5>자세한 내용은 <a href="#">이곳</a>에서 확인할 수 있으며, 점유율을 정하는 기준은 <a href="#">다음</a>과 같다.</td>
+            </tr>
+            <tr id="ranking-white">
+                <td>1. Java</td>
+                <td>2. C</td>
+                <td>3. C++</td>
+                <td><b>4. Python</b></td>
+                <td>5. C#</td>
+            </tr>
+            <tr id="ranking-bold">
+                <td>점유율 14.639%</td>
+                <td>점유율 7.002%</td>
+                <td>점유율 4.751%</td>
+                <td>점유율 3.548%</td>
+                <td>점유율 3.457%</td>
+            </tr>
+            <tr id="ranking-last">
+                <td>작년 대비 6.32% <span style="color:red">감소</span></td>
+                <td>작년 대비 6.22% <span style="color:red">감소</span></td>
+                <td>작년 대비 1.95% <span style="color:red">감소</span></td>
+                <td>작년 대비 0.24% <span style="color:red">감소</span></td>
+                <td>작년 대비 1.02% <span style="color:red">감소</span></td>
+
+            </tr>
+        </tbody>
+    </table>
+
+<!-- 이부분 Indend가 텍스트에 모두 반영됨... 테이블 아님-->
+    <div class="blockquote_green"><p><i>Life is too short, You nees Python.</i><br />인생은 너무 짧다. 그래서 파이썬이 필요하다.</p></div>
+
+    <div class="blockquote_green">
+        <p><i>Life is too short, You nees Python.</i><br />
+        인생은 너무 짧다. 그래서 파이썬이 필요하다.</p></div>
+
+
+
+    <table>
+        <tr>
+            <td>Python2.X</td>
+        </tr>
+
+<!-- 이부분 Indend가 텍스트에 모두 반영됨...테이블-->
+        <tr>
+        <!-- 테이블 안에 테이블 -->
+            <td><table class="blockquote_blue">
+                    <tr>
+                        <td class="blue-box" width="30">1.</td>
+                        <td><code>print 'hello world!'</code><br /></td>
+                    </tr>
+                </table></td>
+        </tr>
+
+
+        <tr>
+
+        <!-- 테이블 안에 테이블 -->
+            <td><table class="blockquote_blue">
+                    <tr>
+                        <td class="blue-box" width="30">1.</td>
+                        <td>
+                            <code>print 'hello world!'</code><br />
+                        </td>
+                    </tr>
+                </table></td>
+        </tr>
+
+
+
+        <tr>
+            <td>Python2.6 ~ 3.X</td>
+        </tr>
+        <tr>
+            <td><table class="blockquote_blue">
+                    <tr>
+                        <td class="blue-box" width="30">1.</td>
+                        <td><code>print ('hello world!')</code></td>
+                    </tr>
+                </table></td>
+        </tr>
+    </table>
+
+    <div class="list">
+        <h3>목차</h3>
+        <ol>
+            <li>개요</li>
+            <li>언어 구현</li>
+                <ol>
+                    <li>Python3.X</li>
+                    <li>Python 2 vs 3</li>
+                    <li>Stackless Python</li>
+                    <li>Pyston</li>
+                    <li>PyPy</li>
+                    <li>웹 브라우저에서 실행될 것을 목적으로 하는 Brython</li>
+                    <li>가상 머신에서 동작하는 구현체</li>
+                        <ol>
+                            <li>Jython</li>
+                            <li>IronPython</li>
+                            <li>Jython이나 IronPython은 왜 쓰는 걸까?</li>
+                        </ol>
+                </ol>
+            <li>장점</li>
+                <ol>
+                    <li>높은 생산성</li>
+                    <li>반복 가능한 객체</li>
+                    <li>디자인 철학</li>
+                    <li>만능 언어</li>
+                </ol>
+            <li>단점</li>
+                <ol>
+                    <li>멀티스레딩 문제</li>
+                    <li>취약점</li>
+                </ol>
+            <li>라이브러리 및 프레임워크</li>
+                <ol>
+                    <li>Django</li>
+                        <ol>
+                            <li>사용 중인 곳</li>
+                        </ol>
+                    <li>C 언어 확장, Cython</li>
+                </ol>
+            <li>관련 팁</li>
+            <li>여담</li>
+            <li>파이썬의 철학(The Zen of Python)</li>
+        </ol>
+
+    </div>
+</body>
+</html>
