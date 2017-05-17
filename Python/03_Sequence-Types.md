@@ -1,147 +1,15 @@
-# 파이썬 사용
-
-## 용어
-
-#### 리터럴
-변하지 않는 데이터 자체의 표현
-
-- 정수형 데이터
-- 문자열 데이터
-- 부동소숫점 데이터
-
-#### 표현식
-값을 의미하는 표현, 값을 반환하는 표현
-
-- 변수
-- 수식 등..
-
-
-#### 구문
-값의 의미를 가지고 있지 않고 목정을 수행하는 코드
-
-```
-FOR char in '안녕하세요':
-	print(char)
-```
-
-## 변수
-
-객체(object)는 데이터의 형태를 결정해주는 타입. 객체의 타입을 바꿀 수 없음.
-
-- 자주 사용하는 객체는 메모리에 고정되어있음. (예: 1~100)
-
-```
->>> a = 1
->>> b = 1
->>> id(a)
-4369052960
->>> id(b)
-4369052960
-```
-
-```
->>> a = 1
->>> print(type(a))			//데이터 타입 확인
-<class 'int'>
->>> 
->>> 
-```
-
-## 변수의 이름 제한
-
-### 사용 가능한 문자
-
-- 소문자
-- 대문자 (첫 글자는 안씀)
-- 숫자
-- 언더스코어 `_`
-- 예약어는 사용할 수 없음.
-	- False, class, finally, is, return, None, continue, for, lambda, try, True, def, from, nonlocal, while, and, del, global, not, with, as, elif, if, or, yield, assert, else, import, pass, break, except, in, raise
-
-
-### 변수의 입력과 출력
-**input**
-
-- 입력된 데이터의 타입은 str
-
-
-# 숫자
-
-### 수학 연산자
-
-### 산술 연산자 결합
-
-### 우선 순위
-- 연산 우선 순위는 수학의 우선 순위와 같음
-- 가독성의 문제가 있을 경우에는 괄호로 묶어준다.
-
-### 진수 base
-|종류|표현|
-|---|---|
-|2진수(binary)|0b or 0B|
-
-
-
-# 문자열
-
-### 문자열 표현
-
-### 문자열 연산
-
-### 형변환
-
-### 이스케이프 문자
-
-### 인덱스 연산
-
-### 슬라이스 연산
-
-- 슬라이스된 리스트가 새롭게 생성됨
-
-`[start(이상):end(미만):step]`
-
-- lux[::-1]			//역순
-
-### 길이재기
-
-- len(문자열)
-
-### 문자열 나누기 split
-- 주어진 구분자로 문자열을 나눈다.
-- 변수.split() 		//공백은 생략 가능
-
-### 문자열 합치기 join
-
-```
->>> "".join(문자열)			//순서 주의
->>> 문자열 사이에 넣을 문자.join(합칠 문자열)
-```
-
-### 대소문자 다루기
-
-### 문자열 포멧
-
-##### 옛날스타일 %
-
-##### 옛 스타일 정렬
-
-##### 새 스타일 {}, format
-타입지정자 {:d} 등은 옛 스타일과 비슷함
-
-##### 새 스타일 정렬
-'{:=^30s}'.format( ' install ' )
-
 
 
 # 시쿼스 타입
 
 ## 리스트
+
 - 순서가 있는 데이터의 집합
 - 내부 데이터 변경 가능
 
 ### 리스트 생성
 
-```
+```python
 >>> list1 = []			//empty list
 >>> list2 = list()		//empty list
 >>> sample_list = ['a', 'b', 'c', 'd']
@@ -150,30 +18,22 @@ FOR char in '안녕하세요':
 
 ### 다른 데이터를 리스트로 변환 list 함수
 
-```
+```python
 >>> list('League of legends')			//공백도 리스트에 포함
 ['L', 'e', 'a', 'g', 'u', 'e', ' ', 'o', 'f', ' ', 'l', 'e', 'g', 'e', 'n', 'd', 's']
->>> 'apple banana melon'.split()		//공백으로 나누거진 리스트 생성
+>>> 'apple banana melon'.split()		//공백으로 나누어진 리스트 생성
+['apple', 'banan', 'melon']
 ```
 
 ### 리스트 항목 변경
 
-```
+```python
 >>> list1[2] = 'a'			//list1의 3번째 항목을 a로 변경
 ```
 
-### 리스트 항목 추가 (append)
-
-```
->>> 
-
-```
-
-- 리스트.append(list) -> 리스트에 리스트가 추가됨
-
 ### 슬라이스 연산
 
-```
+```python
 >>> list_month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 >>> list_month[:3]			//앞에서부터 3개
 >>> list_month[4:6]			//4번째부터 5번째까지
@@ -182,17 +42,58 @@ FOR char in '안녕하세요':
 >>> list_month[::-1]		//역순으로
 ```
 
+### 리스트 항목 추가 (append)
+
+```python
+>>> list1 = ['a', 'b', 'c', 'd']
+>>> list1.append('e')
+>>> list1
+['a', 'b', 'c', 'd', 'e']
+
+# list1에 list2를 추가
+>>> list2 = ['f', 'g']
+>>> list1.append(list1)
+>>> list1
+['a', 'b', 'c', 'd', 'e', ['f', 'g']]
+```
+
 ### 리스트 병합 (extend, +=)
+
+```python
+>>> list1 = ['a', 'b', 'c', 'd']
+>>> list2 = ['f', 'g']
+>>> list1.extend(lsit2)
+>>> list1
+['a', 'b', 'c', 'd', 'f', 'g']
+```
+
+### 특정 위치에 리스트 항목 삭제 del
+
+**del은 리스트 함수가 아닌 파이썬 구문이므로 del 리스트[오프셋] 형태로 사용한다.**
+
+```python
+>>> del list1[0]			//리스트의 왼쪽에서 첫번째 데이터를 삭제
+```
+
+### 특정 위치에 리스트 항목 삭제 pop
+
+``` python
+>>> fruits.pop()					//뒤에서 부터 없어지며 지워지는 데이터를 반환한다.
+>>> fruits.pop(-2)				//오른쪽에서 2번째 데이터가 지워지며 지워지는 데이터를 반환
+>>> fruits.pop(3)				//왼쪽에서 4번째 데이터가 지워지며 지워지는 데이터를 반환
+```
+
+### 값으로 리스트 항목 삭제 remove
+
+```python
+>>> list1.remove('b')
+```
 
 ### 특정 위치에 리스트 항목 추가
 
-fruits.insert(0, 'mango')
-
-### 특정 위치에 리스트 항목 삭제
-
-
-fruits.pop()				//뒤에서 부터 없어진다.
-
+```
+>>> fruits.insert(0, 'mango')		//fruits 리스트의 첫번째 공간에 'mango' 데이터를 추가
+```
 
 
 %hist -> 인터프리터에 입력했던 모든 히스토리가 나옴
@@ -217,7 +118,7 @@ l.sort(list) -> 리스트를 정렬한 복사본을 반환
 - 요소가 1개일 경우 뒤에 꼭 `,`를 넣어줘야 한다.
 - 리스트보다 메모리는 적게 차지한다.
 
-```
+```python
 >>> t = (100, 200)
 >>> t1, t2 = t
 >>> t1
@@ -308,7 +209,7 @@ print('Good') if vacation >= 7 else print('Normal') if vacation >= 5 else print(
 
 ## for (조건에 따른 순회)
 
-```
+```python
 for 항목 in 순회가능(iterable)객체:
    <항목을 사용한 코드>					//들여쓰기 주의
 ```
@@ -329,18 +230,19 @@ for x in range(0, 10):
 - 여러 시퀀스를 동시 순회
 - 시퀀스 순회한 결과 값을 저장하고 있지 않음.
 
+```python
 >>> fruits = ['apple', 'banana', 'melon']
 >>> colors = ['red', 'yellow', 'green', 'purple']
 >>> for fruit, color in zip(fruits, colors):
 >>> 	print(fruit)
 >>> 	print(color)
-
+```
 
 #### zip은 tuple이나 list로 변경 가능하다.
 
 - 순회 결과값(데이터)을 가지고 있지 않기때문에 1번 변환되면 값이 없어진다.
 
-```
+```python
 >>> z = zip(fruits, colors)		//zip
 <zip at 0x106305788>
 >>> t = tuple(z)					//zip을 tuple로 변경 가능 (한번만 사용가능)
