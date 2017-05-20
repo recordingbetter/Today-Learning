@@ -38,7 +38,7 @@
 |CREATE INDEX|데이터의 인덱스 생성|
 |DROP INDEX|데이터의 인덱스 삭제|
 
-### 데이터 가져오기
+### 데이터 가져오기 statement
 
 #### SELECT
 
@@ -150,6 +150,67 @@ ON Orders.ShipperID = Shippers.ShipperID
 GROUP BY ShipperName;
 ```
 
+#### SELECT INTO
+
+- 하나의 테이블로부터 데이터를 복사하여 새로운 테이블로 옮긴다.
+- 새로운 테이블을 생성함.
+
+```sql
+# 모든 데이터
+SELECT *
+INTO newtable [IN externaldb]
+FROM oldtable
+WHERE condition;
+
+# 일부 columns
+SELECT column1, column2, column3, ...
+INTO newtable [IN externaldb]
+FROM oldtable
+WHERE condition;
+
+# Customers 테이블을 복사하여 백업을 만든다.
+SELECT * INTO CustomersBackup2017
+FROM Customers;
+
+# Backup.mdb라는 데이터베이스 안에 Customers 테이블을 복사하여 백업을 만든다.
+SELECT * INTO CustomersBackup2017 IN 'Backup.mdb'
+FROM Customers;
+
+# 기존 테이블과 함께 조작
+SELECT Customers.CustomerName, Orders.OrderID
+INTO CustomersOrderBackup2017
+FROM Customers
+LEFT JOIN Orders ON Customers.CustomerID = Orders.CustomerID;
+
+# 기존 테이블의 구조만 복사하여 새로운 테이블을 만든다. (데이터는 가지고 오지 않음)
+SELECT * INTO newtable
+FROM oldtable
+WHERE 1 = 0;
+```
+
+#### INSERT INTO SELECT
+
+- 하나의 테이블로부터 데이터를 가지고 와서 이미 존재하는 테이블에 데이터를 추가한다.
+- 기존 데이터들에 영향을 주지 않는다.
+
+```sql
+# table2에서 모든 데이터를 가지고 와서 table1에 추가해준다.
+INSERT INTO table2
+SELECT * FROM table1
+WHERE condition;
+
+# table2에서 특정 column의 데이터를 가지고 와서 table1에 추가해준다.
+INSERT INTO table2 (column1, column2, column3, ...)
+SELECT column1, column2, column3, ...
+FROM table1
+WHERE condition;
+
+# Country의 값이 Germany인 데이터
+INSERT INTO Customers (CustomerName, City, Country)
+SELECT SupplierName, City, Country FROM Suppliers
+WHERE Country='Germany';
+```
+
 ### 데이터 추가, 수정
 
 #### INSERT INTO
@@ -168,9 +229,10 @@ VALUES (value1, value2, ...);
 
 ```
 
-#### NULL
+#### NULL 값
 
-- 데이터가 없는 필드 (비어있음)
+- 필드에 데이터가 없음 (비어있음)
+- 0이 아니다. 0과 비교 불가능.
 
 ```sql
 # 값이 없는 데이터를 불러온다.
@@ -308,6 +370,33 @@ SELECT CustomerName, LEN(Address) AS LenthOfAddress
 FROM Customers;
 ```
 
+#### ISNULL(), NVL(), IFNULL(), COALESCE()
+
+```sql
+SELECT ProductName,UnitPrice*(UnitsInStock+UnitsOnOrder)
+FROM Products
+
+# UnitsOnOrder 컬럼 값이 null이면 0으로 대체하여 계산
+# MS Access : ISNULL()
+SELECT ProductName,UnitPrice*(UnitsInStock+IIF(ISNULL(UnitsOnOrder),0,UnitsOnOrder))
+FROM Products
+
+# SQL Server : ISNULL()
+SELECT ProductName,UnitPrice*(UnitsInStock+ISNULL(UnitsOnOrder,0))
+FROM Products
+
+# Oracle : NVL()
+SELECT ProductName,UnitPrice*(UnitsInStock+NVL(UnitsOnOrder,0))
+FROM Products
+
+# MySQL : IFNULL(), COALESCE()
+SELECT ProductName,UnitPrice*(UnitsInStock+IFNULL(UnitsOnOrder,0))
+FROM Products
+
+SELECT ProductName,UnitPrice*(UnitsInStock+COALESCE(UnitsOnOrder,0))
+FROM Products
+```
+
 ### Operator
 
 #### LIKE / NOT LIKE
@@ -392,6 +481,24 @@ AND NOT CategoryID IN (1,2,3);
 SELECT * FROM Products
 WHERE ProductName BETWEEN 'Carnarvon Tigers' AND 'Mozzarella di Giovanni'
 ORDER BY ProductName;
+```
+
+#### ANY, ALL ??
+
+- WHERE 이하 HAVING 이하에 사용한다.
+- ANY : 조건에 맞는 데이터가 하나라도 있을때 True를 리턴
+- ALL : 모든 데이터가 조건에 맞을때 True를 리턴 
+
+```sql
+# OrderDetails.Quantity가 10인 데이터가 1개라도 있으면 True를 반환하여 Quantity가 10인 OrderDetails.ProductID와 같은 ProductID를 가진 Products.ProductName을 보여준다.
+SELECT ProductName
+FROM Products
+WHERE ProductID = ANY (SELECT ProductID FROM OrderDetails WHERE Quantity = 10);
+
+# 모든 OrderDetails.Quantity 데이터가 10이면 True를 반환하여 Quantity가 10인 OrderDetails.ProductID와 같은 ProductID를 가진 Products.ProductName을 보여준다.
+SELECT ProductName
+FROM Products
+WHERE ProductID = ALL (SELECT ProductID FROM OrderDetails WHERE Quantity = 10);
 ```
 
 #### Aliases
@@ -567,7 +674,110 @@ WHERE EXISTS
 (SELECT column_name FROM table_name WHERE condition);
 ```
 
+#### 주석 --
 
+- \-\- : 주석이 1줄일때
+- /\* ... \*/ : 여러줄 주석일때
+
+```sql
+--Select all:
+SELECT * FROM Customers;
+
+/*Select all the columns
+of all the records
+in the Customers table:*/
+SELECT * FROM Customers;
+
+SELECT * FROM Customers WHERE (CustomerName LIKE 'L%'
+OR CustomerName LIKE 'R%' /*OR CustomerName LIKE 'S%'
+OR CustomerName LIKE 'T%'*/ OR CustomerName LIKE 'W%')
+AND Country='USA'
+ORDER BY CustomerName;
+```
+
+
+### DATABASE
+
+#### CREATE DATABASE
+
+- 데이터베이스를 생성한다.
+- 왠만해서는 해볼 일이 없다.
+
+```sql
+CREATE DATABASE databasename;
+```
+
+#### DROP DATABASE
+
+- 데이터베이스를 삭제한다.
+
+```sql
+DROP DATABASE databasename;
+```
+
+#### CREATE TABLE
+
+- 데이터베이스 내에 테이블을 생성한다.
+- 테이블 이름이 꼭 필요하다.
+- 테이블 내에 column들을 만들어준다. 데이터타입 (컬럼의 데이터 사이즈를 지정)
+
+```sql
+CREATE TABLE table_name (
+    column1 datatype,
+    column2 datatype,
+    column3 datatype,
+   ....
+);
+
+CREATE TABLE Persons (
+    PersonID int,
+    LastName varchar(255),
+    FirstName varchar(255),
+    Address varchar(255),
+    City varchar(255) 
+);
+```
+
+#### DROP TABLE
+
+- 테이블을 삭제한다.
+
+
+```sql
+DROP TABLE table_name;
+
+DROP TABLE Shippers;
+
+# 테이블을 완전히 삭제하고 같은 구조로 다시 만든다.
+TRUNCATE TABLE table_name;
+```
+
+#### ALTER TABLE
+
+- 이미 만들어진 테이블에서 데이터를 추가하거나, 삭제하거나 변경할때 사용
+
+```sql
+-- add column
+ALTER TABLE table_name
+ADD column_name datatype;
+
+-- drop column
+ALTER TABLE table_name
+DROP COLUMN column_name;
+
+-- alter/modify column
+-- SQL Server / MS Access
+ALTER TABLE table_name
+ALTER COLUMN column_name datatype;
+
+-- My SQL / Oracle (prior version 10G)
+ALTER TABLE table_name
+MODIFY COLUMN column_name datatype;
+
+-- Oracle 10G and later
+ALTER TABLE table_name
+MODIFY column_name datatype;
+```
 
 
 
