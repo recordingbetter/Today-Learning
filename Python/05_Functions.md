@@ -1,7 +1,4 @@
 
-
-
-
 # 함수
 
 ### 함수의 정의, 실행
@@ -280,5 +277,219 @@ gugu(range(2, 4), 'normal', make_gugu, print_gugu)
 ### 스코프 (영역)
 
 - 각 함수마다 영역을 가진다.
+- 내장 함수들은 Built-in 빌트인에 있다.
 - 동작하는 프로그램의 최 상위 위치는 Global Scope(전역)라고 하며, 
 - 전역 스코프 내부에 독립적인 영역을 가지는 경우 Local Scope라고 한다.
+- 빌트인 > 글로벌 > 로컬
+
+### dir
+
+```python
+# 내용확인
+>>> dir(__builtin__) 빌트인 영역 내용 확인
+>>> dir(globals) 글로벌 영역 내용 확인
+>>> locals() 로컬 영역의 내용 확인
+```
+
+### 로컬 스코프에서 글로벌 스코프의 변수를 사용 global
+
+```python
+champion = "Lux"
+print(id(champion))
+
+def change_global_champion():
+    # 아래 명령으로 local에서 global 변수를 변경할 수 있게 해줌.
+    global champion
+    # global 영역의 champion 변수값을 변경
+    champion = "Ahri"
+    print('in_change_global_champion: {}'.format(champion))
+    print(id(champion))
+    
+change_global_champion()
+
+print(champion)
+print(id(champion))
+```
+
+```python
+# 딕셔너리에서 키 'champion'에 값이 있으면 가져오고 없으면 none 출력
+>>> locals().get('champion', 'none') 
+
+# 딕셔너리에서 키 'champion'의 값을 가져온다.
+>>> locals().['champion']
+```
+
+### 내부함수에서의 로컬 스코프 (nonlocal)
+
+- 자신과 상위의 변수값을 변경. global 영역의 변수는 바뀌지 않음.
+
+```python
+champion = 'Lux'
+print('=====global')
+print('global champion id:', id(champion))
+print('global champion value:', globals().get('champion', 'none'))
+print(' ')
+
+def local1():
+    print('=====local1 after 변수선언')
+    champion = 'Ahri'
+    print('local1 after champion id:', id(champion))
+    print('local1 after locals():', locals().get('champion', 'none'))
+    print(' ')
+    
+    def local2():
+        # 바로 위에 있는 함수의 변수값을 로컬 변수로 취급한다. 내부함수에서만 사용.
+        nonlocal champion
+        
+        champion = 'Ezreal'
+        print('=====local2에서 Ezreal로 변수선언 / nonlocal')
+        print('local2 after champion id:', id(champion))
+        print('local2 after locals():', locals().get('champion', 'none'))
+        print(' ')
+
+    print('=====local1 before local2() 함수 호출')
+    print('local1 before local2() champion id:', id(champion))
+    print('local1 before local2() locals():', locals().get('champion', 'none'))
+    print(' ')
+        
+    local2()
+    
+    print('=====local2에서 Ezreal로 변수선언 이후의 local1 / nonlocal')
+    print('local1 after local2() champion id:', id(champion))
+    print('local1 after local2() locals():', locals().get('champion', 'none'))
+    print(' ')
+    
+local1()
+
+print('=====위 프로세스 종료 후 global')
+print('global champion id:', id(champion))
+print('global champion value:', globals().get('champion', 'none'))
+print(' ')
+```
+
+### global키워드와 인자(argument)전달의 차이
+
+##### 인자로 전달한 경우
+
+```python
+global_level = 200
+print('id of global:', id(global_level))
+
+def level_add(value):
+    value += 30
+    print('function value: ', value)
+
+# global_level 값이 인자로만 전달되서 global_level 원래 값은 바뀌지 않는다.
+level_add(global_level)
+print('value of global after func:', global_level)
+print('id of global after func:', id(global_level))
+```
+
+##### global키워드를 사용한 경우
+
+```python
+global_level = 100
+
+# global 키워드를 사용하여 실제 global_level의 값이 바뀐다.
+def level_add():
+    # global 변수를 호출함.
+    global global_level
+    
+    global_level += 30
+    print(global_level)
+    
+level_add()
+print(global_level)
+```
+
+- 변수의 값이 변경될때, id(value) 값이 바뀐다.
+- 변수가 리스트일 경우에는 리스트 내부의 값이 바뀌어도 id(list)값은 바뀌지 않는다.
+
+### 람다 함수 lamda
+
+- 한 줄 짜리 표현식으로 이루어지며, 반복문이나 조건문 등의 제어문은 포함될 수 없다.
+- 또한, 함수이지만 정의/호출이 나누어져 있지 않으며 표현식 자체가 바로 호출된다.
+
+```python
+lambda <매개변수> : <표현식>
+
+(lambda p, l:p*l)(3, 4)
+12
+```
+
+
+```python
+# 함수의 정의
+>>> def multi(x):
+...   return x*x
+... 
+
+# 함수의 호출
+>>> multi(5)
+25
+
+# 람다함수의 사용
+>>> (lambda x : x*x)(5)
+25
+
+# 람다함수를 사용해 함수 정의
+>>> f = lambda x : x*x
+>>> f(5)
+25
+```
+
+
+### 클로져 Closure
+
+##### 내부함수의 클로져
+
+```python
+level = 0
+
+def outter():    
+    # 함수 inner의 클로져 시작 부분 (nonlocal을 사용했기 때문에)
+    level = 50
+    
+    def inner():
+        nonlocal level
+        level += 3
+        print(level)
+        # 여기까지
+        
+    return inner
+
+# 클로저가 다르기 때문에 각각의 값을 리턴한다.
+# 함수를 실행하기 위한 범위(클로져)의 내용들(변수값등)을 func1에 저장
+func1 = outter()
+func2 = outter()
+
+func1()
+func1()
+func1()
+print(' ')
+func2()
+func2()
+```
+
+```
+< 결과 >
+53
+56
+59
+ 
+53
+56
+```
+
+- func1, func2에 각각 클로져가 정해졌기때문에 결과값이 각각 누적된다.
+
+### 데코레이터 decorator
+
+
+
+
+
+
+
+
+
