@@ -1105,7 +1105,7 @@ DROP INDEX index_name;
 - PK와 함께 사용되어 유일한 값을 생성한다.
 - 데이터가 추가될 경우 설정된 컬럼에 기본적으로 1로 시작하여 1씩 추가되어 입력된다.
 
-```
+```sql
 # MySQL
 CREATE TABLE Persons (
     ID int NOT NULL AUTO_INCREMENT,
@@ -1198,6 +1198,38 @@ WHERE condition;
 # VIEW 삭제
 DROP VIEW view_name;
 ```
+
+### SQL Injection
+
+- 데이터베이스를 파괴할 수 있다.
+- 악의적인 사용자가 웹페이지 코드에 사용된 SQL구문을 해석하여 해킹을 시도할 수 있음
+
+##### 웹페이지에 아래와 같은 코드가 사용되었을 경우,
+
+```
+txtUserId = getRequestString("UserId");
+txtSQL = "SELECT * FROM Users WHERE UserId = " + txtUserId;
+```
+
+- UserId를 `105 OR 1=1`로 설정할 경우,
+- 
+```sql
+SELECT * FROM Users WHERE UserId = 105 OR 1=1;
+```
+
+위의 SQL 구문은 항상 참이 되어 Users 테이블의 모든 데이터를 가지고 온다.
+
+
+##### injection을 막기 위한 매개변수
+
+- SQL 파라미터를 사용한다. `@`
+
+```asp.net
+txtUserId = getRequestString("UserId");
+txtSQL = "SELECT * FROM Users WHERE UserId = @0";
+db.Execute(txtSQL,txtUserId);
+```
+
 
 
 
