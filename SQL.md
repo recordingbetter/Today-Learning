@@ -779,6 +779,427 @@ ALTER TABLE table_name
 MODIFY column_name datatype;
 ```
 
+### Constraints
+
+- 컬럼에 유일한 값을 입력한다.
+
+```sql
+CREATE TABLE table_name (
+    column1 datatype constraint,
+    column2 datatype constraint,
+    column3 datatype constraint,
+    ....
+);
+```
+
+#### NOT NULL 
+
+- Ensures that a column cannot have a NULL value
+- 비어있는 경우를 허용하지 않는다.
+- INSERT INTO로 데이터를 입력할때 NOT NULL이 설정된 필드 데이터가 비어있으면 에러가 발생한다.
+
+```sql
+# ID, LastName, FirstName 필드가 비어있는 경우를 허용하지 않음.
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255) NOT NULL,
+    Age int
+);
+```
+
+#### UNIQUE 
+
+- Ensures that all values in a column are different
+- 유일한 값을 갖게 한다.
+- 1 테이블 내에 여러개의 유니크 값을 가질 수 있다.
+- 하나 이상의 컬럼에 유니크를 지정할 수 있다.
+
+```sql
+# 1개의 컬럼에 유니크를 지정할 경우
+# SQL Server / Oracle / MS Access
+CREATE TABLE Persons (
+    ID int NOT NULL UNIQUE,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int
+);
+
+# MySQL
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    UNIQUE (ID)
+);
+
+# 여러 컬럼에 유니크를 지정할 경우
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    CONSTRAINT UC_Person UNIQUE (ID,LastName)
+);
+
+# 만들어진 테이블의 1개의 칼럼에 유니크를 지정할 경우
+ALTER TABLE Persons
+ADD UNIQUE (ID);
+
+# 만들어진 테이블의 여러개의 칼럼에 유니크를 지정할 경우
+ALTER TABLE Persons
+ADD CONSTRAINT UC_Person UNIQUE (ID,LastName);
+
+# 유니크 설정을 drop할 경우
+# MySQL
+ALTER TABLE Persons
+DROP INDEX UC_Person;
+
+# SQL Server / Oracle / MS Access
+ALTER TABLE Persons
+DROP CONSTRAINT UC_Person;
+```
+
+#### PRIMARY KEY 
+
+- A combination of a NOT NULL and UNIQUE. Uniquely identifies each row in a table
+- null 값을 가질 수 없다.
+- table당 PK는 1개
+
+```sql
+# MySQL
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    PRIMARY KEY (ID)
+);
+
+# SQL Server / Oracle / MS Access
+CREATE TABLE Persons (
+    ID int NOT NULL PRIMARY KEY,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int
+);
+
+# 여러개의 컬럼에 PK 설정을 할 경우
+# PK는 하나(PK_Person), PK 값은 ID, LastName에 입력된다.
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    CONSTRAINT PK_Person PRIMARY KEY (ID,LastName)
+);
+
+# 이미 만들어진 테이블에 PK 설정을 할 경우
+# 이미 PK가 지정된 테이블일 겨우 적용되지 않음.
+# NULL 값이 들어있는 컬럼에 PK를 지정해야할 경우, NULL 값을 지우고 지정해야함.
+ALTER TABLE Persons
+ADD PRIMARY KEY (ID);
+
+# PK 설정 해제
+# MySQL
+ALTER TABLE Persons
+DROP PRIMARY KEY;
+
+# SQL Server / Oracle / MS Access
+ALTER TABLE Persons
+DROP CONSTRAINT PK_Person;
+```
+
+#### FOREIGN KEY 
+
+- Uniquely identifies a row/record in another table
+- 외래키, 다른 데이터베이스와의 연결을 위한 키
+- 다른 테이터베이스의 PK와 연결됨
+
+```sql
+# Persons.PersonID의 값을 참조하여 FK 설정
+# MySQL
+CREATE TABLE Orders (
+    OrderID int NOT NULL,
+    OrderNumber int NOT NULL,
+    PersonID int,
+    PRIMARY KEY (OrderID),
+    FOREIGN KEY (PersonID) REFERENCES Persons(PersonID)
+);
+
+# SQL Server / Oracle / MS Access
+CREATE TABLE Orders (
+    OrderID int NOT NULL PRIMARY KEY,
+    OrderNumber int NOT NULL,
+    PersonID int FOREIGN KEY REFERENCES Persons(PersonID)
+);
+
+# FK에 이름을 부여할 경우
+CREATE TABLE Orders (
+    OrderID int NOT NULL,
+    OrderNumber int NOT NULL,
+    PersonID int,
+    PRIMARY KEY (OrderID),
+    CONSTRAINT FK_PersonOrder FOREIGN KEY (PersonID)
+    REFERENCES Persons(PersonID)
+);
+
+# 이미 만들어진 테이블에 FK 설정을 할 경우
+ALTER TABLE Orders
+ADD FOREIGN KEY (PersonID) REFERENCES Persons(PersonID);
+
+# 이미 만들어진 테이블에 FK에 이름을 붙여 설정할 경우
+ALTER TABLE Orders
+ADD CONSTRAINT FK_PersonOrder
+FOREIGN KEY (PersonID) REFERENCES Persons(PersonID);
+
+# FK 설정 해제
+# MySQL
+ALTER TABLE Orders
+DROP FOREIGN KEY FK_PersonOrder;
+
+# SQL Server / Oracle / MS Access
+ALTER TABLE Orders
+DROP CONSTRAINT FK_PersonOrder;
+```
+
+#### CHECK 
+
+- Ensures that all values in a column satisfies a specific condition
+- 특정 컬럼에 입력되는 데이터의 범위를 한정한다.
+- 데이터 입력 시 설정된 범위에 맞지 않을 경우 에러가 발생
+
+```sql
+# Persons.Age 값은 18보다 커야한다.
+# MySQL
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    CHECK (Age>=18)
+);
+
+# SQL Server / Oracle / MS Access
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int CHECK (Age>=18)
+);
+
+# 여러개의 조건으로 제한. Persons.Age가 18이상, City가 Sandnes이어야 한다.
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    City varchar(255),
+    CONSTRAINT CHK_Person CHECK (Age>=18 AND City='Sandnes')
+);
+
+# 이미 만들어진 테이블의 컬럼에 데이터 범위를 제한할 경우
+ALTER TABLE Persons
+ADD CHECK (Age>=18);
+
+# 이미 만들어진 테이블에 데이터 범위 제한을 이름을 붙여 설정할 경우
+ALTER TABLE Persons
+ADD CONSTRAINT CHK_PersonAge CHECK (Age>=18 AND City='Sandnes');
+
+# 제한 해제
+# MySQL
+ALTER TABLE Persons
+DROP CHECK CHK_PersonAge;
+
+# SQL Server / Oracle / MS Access
+ALTER TABLE Persons
+DROP CONSTRAINT CHK_PersonAge;
+```
+
+#### DEFAULT 
+
+- Sets a default value for a column when no value is specified
+- 특정 컬럼에 사용자의 입력이 없을 경우 자동으로 입력될 값을 정해준다.
+- 시스템값을 자동으로 입력되게 설정할 수 있다.
+
+```sql
+# Persons.City에 값이 없을 경우 자동으로 'Sandnes'가 입력된다.
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    City varchar(255) DEFAULT 'Sandnes'
+);
+
+# 시스템값을 자동으로 입력할 수 있다. (GETDATE() : 날짜 입력)
+CREATE TABLE Orders (
+    ID int NOT NULL,
+    OrderNumber int NOT NULL,
+    OrderDate date DEFAULT GETDATE()
+);
+
+# 이미 만들어진 테이블에 설정
+# MySQL
+ALTER TABLE Persons
+ALTER City SET DEFAULT 'Sandnes';
+
+# SQL Server / MS Access
+ALTER TABLE Persons
+ALTER COLUMN City SET DEFAULT 'Sandnes';
+
+# Oracle
+ALTER TABLE Persons
+MODIFY City DEFAULT 'Sandnes';
+
+# 설정 해제
+# MySQL
+ALTER TABLE Persons
+ALTER City DROP DEFAULT;
+
+# SQL Server / Oracle / MS Access
+ALTER TABLE Persons
+ALTER COLUMN City DROP DEFAULT;
+```
+
+#### INDEX 
+- Use to create and retrieve data from the database very quickly
+- 검색이 잦은 컬럼에 인덱스를 부여하면 속도가 빨라진다.
+- 업데이트가 잦은 컬럼의 경우에는 효율적이지 않다.
+- 중복값이 허용된다. (유니크 인덱스일경우 중복값이 허용되지 않음)
+
+```sql
+CREATE INDEX index_name
+ON table_name (column1, column2, ...);
+
+# Unique Index
+CREATE UNIQUE INDEX index_name
+ON table_name (column1, column2, ...);
+
+# Persons.LastName 의 인덱스를 idx_lastname으로 생성한다.
+CREATE INDEX idx_lastname
+ON Persons (LastName);
+
+# Persons.LastName과 FirstName의 인덱스를 idx_pnname으로 생성한다.
+CREATE INDEX idx_pname
+ON Persons (LastName, FirstName);
+
+# 인덱스 삭제
+# MS Access
+DROP INDEX index_name ON table_name;
+
+# SQL Server
+DROP INDEX table_name.index_name;
+
+# DB2/Oracle
+DROP INDEX index_name;
+
+# MySQL
+ALTER TABLE table_name
+DROP INDEX index_name;
+```
+
+#### AUTO INCREMENT
+
+- PK와 함께 사용되어 유일한 값을 생성한다.
+- 데이터가 추가될 경우 설정된 컬럼에 기본적으로 1로 시작하여 1씩 추가되어 입력된다.
+
+```
+# MySQL
+CREATE TABLE Persons (
+    ID int NOT NULL AUTO_INCREMENT,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    PRIMARY KEY (ID)
+);
+
+# 100부터 시작
+ALTER TABLE Persons AUTO_INCREMENT=100;
+
+
+# SQL Server
+CREATE TABLE Persons (
+    ID int IDENTITY(1,1) PRIMARY KEY,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int
+);
+
+# 10부터 시작하여 5씩 증가
+CREATE TABLE Persons (
+    ID int IDENTITY(10,5) PRIMARY KEY,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int
+);
+
+
+# MS Access
+CREATE TABLE Persons (
+    ID Integer PRIMARY KEY AUTOINCREMENT,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int
+);
+
+# 10부터 시작하여 5씩 증가
+CREATE TABLE Persons (
+    ID Integer PRIMARY KEY AUTOINCREMENT(10, 5),
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int
+);
+
+# Oracle
+# 시퀀스 객체를 따로 만들어 만들어진 값을 입력
+CREATE SEQUENCE seq_person
+MINVALUE 1
+START WITH 1
+INCREMENT BY 1
+CACHE 10;
+
+# 위 시퀀스에서 생성된 값을 ID 컬럼에 입력
+INSERT INTO Persons (ID,FirstName,LastName)
+VALUES (seq_person.nextval,'Lars','Monsen');
+```
+
+### VIEW
+
+- SELECT로 가져올 데이터에 대한 가상테이블
+- 실제 테이블처럼 동작하기도 한다.
+- 가장 최근의 데이터로 만들어준다.
+- 가상테이블의 데이터로 가상테이블을 만들 수도 있다.
+
+```sql
+CREATE VIEW view_name AS
+SELECT column1, column2, ...
+FROM table_name
+WHERE condition;
+# 아래 명령으로 확인
+SELECT * FROM [Current Product List];
+
+
+# 사용예
+CREATE VIEW [Products Above Average Price] AS
+SELECT ProductName, UnitPrice
+FROM Products
+WHERE UnitPrice > (SELECT AVG(UnitPrice) FROM Products);
+# 아래 명령으로 확인
+SELECT * FROM [Products Above Average Price];
+
+# VIEW 업데이트
+CREATE OR REPLACE VIEW view_name AS
+SELECT column1, column2, ...
+FROM table_name
+WHERE condition;
+
+# VIEW 삭제
+DROP VIEW view_name;
+```
+
+
 
 
 
