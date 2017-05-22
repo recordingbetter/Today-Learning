@@ -1222,6 +1222,7 @@ SELECT * FROM Users WHERE UserId = 105 OR 1=1;
 
 ##### injection을 막기 위한 매개변수
 
+- 여러가지 방법이 있음.
 - SQL 파라미터를 사용한다. `@`
 
 ```asp.net
@@ -1254,3 +1255,5 @@ db.Execute(txtSQL,txtUserId);
 
 
 
+
+	
