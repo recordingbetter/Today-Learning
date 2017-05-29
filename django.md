@@ -41,7 +41,7 @@ $ ./manage.py runserver
 ### 2. app 추가
 
 ```shell
-# 프로젝트 폴더 내에 blod app을 추가한다.
+# 프로젝트 폴더 내에 blog app을 추가한다.
 $ ./manage.py startapp blog
 ```
 
@@ -115,7 +115,7 @@ admin.site.register(Post)
 # 터미널에서 서버 시작
 $ ./manage.py runserver
 
-# 관리자 계정을 만든다 (서버 시작 후에 만들어야 한다.)
+# 관리자 계정을 만든다
 $ ./manage.py createsuperuser
 
 ```
@@ -142,7 +142,8 @@ urlpatterns = [
 
 ### 7. templates
 
-- mysite/settings.py 파일의 TEMPLATES 항목에 
+- 프로젝트 폴더 하위에 templates/blog 폴더 생성
+- mysite/settings.py 파일의 TEMPLATES 항목에 아래 내용 추가 (지정한 경로의 폴더에서 template을 찾는다)
 
 ```python
 # mysite/settings.py
@@ -172,6 +173,7 @@ TEMPLATES = [
     },
 ]
 ```
+
 
 ### 8. ORM / Query Sets
 
@@ -223,12 +225,83 @@ SELECT "blog_post"."id", "blog_post"."author_id", "blog_post"."title", "blog_pos
 >>> post.publish()
 ```
 
+#### get
+
+- `model.objects.get(조건)`
+- 조건에 맞는 1개의 결과만 반환한다.
+- `value_name.column_name`으로 사용
+- 조건에 맞는 값이 1개 이상일 경우 에러 발생
+
+```python
+key = model1.objects.get(pk=1)
+print(key.name)
+```
+  
+#### all
+
+- `model.objects.all()`
+- 모든 값을 반환
+
+```python
+key = model1.objects.all()
+print(key[0]['name'])
+```
+
+#### filter
+
+- `model.objects.filter(조건)`
+- 조건에 맞는 모든 값을 반환
+
+```python
+key = model2.objects.filter(name='lee')
+print(key[0]['name'])
+```
+
+#### 조건 키워드
+
+|키워드|설명|사용예|
+|---|---|---|
+|\_\_lt / \_\_gt</br>\_\_lte / \_\_gte|~보다 작다 / ~보다 크다</br>~보다 작거나 같다. ~보다 크거나 같다.|id가 1보다 큰 데이터 검색</br>model1.objects.filter(id\_\_gt=1)|
+|\_\_in|주어진 리스트 안에 존재하는 데이터 검색|model1.objects.filter(id\_\_in[2, 3, 5]|
+|\_\_year</br>\_\_month</br>\_\_day|해당 년도, 월, 일 검색|model1.objects.filter(published_date\_\_year=2015)|
+|\_\_isnull|해당 열의 값이 null인 데이터 검색|model1.objects.filter(name__isnull=True)|
+|\_\_contains</br>\_\_icontains|해당 열의 값이 지정한 문자열을 포함하는 데이터 검색</br>\_\_icontains는 대소문자를 구별하지 않음.|model1.objects.filter(name\_\_contains='com')|
+|\_\_startswith</br>\_\_istartswith|해당 열의 값이 지정한 문자열로 시작하는 데이터 검색</br>\_\_istartswith는 대소문자를 구별하지 않음.|model1.objects.filter(name\_\_startswith='com')|
+|\_\_endswith</br>\_\_iendswith|해당 열의 값이 지정한 문자열로 끝나는 데이터 검색</br>\_\_iendswith는 대소문자를 구별하지 않음.|model1.objects.filter(name\_\_endswith='com')|
+|\_\_range|문자, 숫자, 날짜의 범위를 지정|model1.objects.filter(id\_\_range(2, 10)|
+  
+#### order by
+
+- `model.objects.order_by('값')`
+- 기본은 오름차순 정렬
+- 내림차순일 경우, 컬럼명 앞에 `-`를 붙여준다.
+
+```python
+value = model.objects.order_by('pk')		#오름차순
+value = model.objects.order_by('-pk')		#내림차순
+```
+
+#### values
+
+- `model.objects.values('값')`
+- 특정 컬럼의 값만 반환
+
+```python
+value = model.objects.values('pk')		# query set 형태로 pk값만 반환
+```
+  
+
 ### 9. 템플릿 동적 데이터
 
+- blog/views.py 파일에 아래 내용을 추가하여 urls.py 파일에서 호출할때 실행할 함수를 만든다.
 - 쿼리셋을 views.py 파일에 적용한다.
 - post_list.html 에서 보이게 셋팅
 
 ```python
+from django.shortcuts import render
+from django.utils import timezone
+from .models import Post
+
 def post_list(request):
     # posts 변수에 ORM을 이용해서 전체 Post의 리스트(쿼리셋)을 대입
     # posts = Post.objects.all()
@@ -256,6 +329,7 @@ def post_list(request):
     <div>
         <h1><a href="#">Django Girls Blog by Joe</a></h1>
         <h3>{{ title }}</h3>
+    </div>
 
 # posts를 순회하기 위해 for문을 사용
 {% for post in posts %}
