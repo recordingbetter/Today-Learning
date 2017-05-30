@@ -345,6 +345,179 @@ def post_list(request):
 </html>
 ```
 
+### 10. bootstrap 적용
+
+(1) bootstrap을 다운받아 django_app/static 폴더에 넣어준다.
+(2) mysite/settings.py에 static 폴더 경로 추가
+
+```python
+
+
+# django_app/static 폴더의 경로를 STATIC_DIR에 할당
+STATIC_DIR = os.path.join(BASE_DIR, 'static')
+
+# 이 경로로 시작하는 URL은 정적파일들의 위치에서 파일을 찾아 리턴
+STATIC_URL = '/static/'
+
+# 이 리스트(또는 튜플)의 경로는 STATIC_URL로 요청된 파일을 찾는 폴더로 사용됨
+STATICFILES_DIRS = (
+    STATIC_DIR,
+)
+```
+(3) post_list.html에 아래 내용을 추가해 준다. (bootstrap 경로)
+
+```html
+<head>
+    <!--적용되면 경로는 static/bootstrap/css/bootstrap.css 이렇게 바뀜. 탬플릿태그-->
+    
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+    
+</head>
+```
+
+(4) bootstrap을 적용해줄 부분에 적용해준다.
+
+### 11. 템플릿 확장하기 (post_detail 만들기)
+
+(1) views.py에 view 추가
+
+```python
+
+def post_detail(request):
+    context = {
+    	# id값(장고에서는 pk로 사용가능)이 아래 urls.py에서 보내준 pk값과 일치하는 post를 보내준다.
+        'post': Post.objects.get(id=pk)
+    }
+    return render(request, 'blog/post_detail.html', context)
+```
+
+(2) urls.py에 경로 추가
+
+```python
+
+urlpatterns = [
+    url(r'^admin/', admin.site.urls),
+    # url에 이름을 정해주면 다른 곳에서 참조가 가능하다.
+    url(r'^$', views.post_list, name='post_list'),
+    # post/로 시작하고 숫자 1개 이상을 가진 뒤 /로 끝나는 url
+    # post 이후에 오는 숫자를 pk로 이름지어줌. -> views.py에서 인자로 사용 가능
+    # views.post_detail(request, pk) 형태로 전달됨
+    url(r'post/(?P<pk>\d+)/$', views.post_detail, name='post_detail'),
+]
+```
+
+(3) html에서 경로를 정해준다.
+
+```html
+<div class="post-list">
+    {% for post in posts %}
+    <div class="post">
+    # 경로를 urls.py에서 리버스로 가지고 온다.
+        <h3><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h3>
+        <p class="text-right"><small>published: {{ post.published_date }}</small></p>
+        <p>{{ post.text|truncatechars:120 }}</p>
+
+    </div>
+{% endfor %}
+</div>
+```
+
+
+### 12. 글쓰기 기능 만들기 post_create.html
+
+(1) urls.py에 post 작성을 위한 url을 만들어 준다.
+
+```python
+urlpatterns = [
+    url(r'^admin/', admin.site.urls),
+    url(r'^$', views.post_list, name='post_list'),
+    # views.post_detail(request, pk) 형태로 전달됨
+    url(r'^post/(?P<pk>\d+)/$', views.post_detail, name='post_detail'),
+    url(r'^post/create/$', views.post_create, name='post_create'),
+]
+```
+
+(2) views.py에 "POST" 매소드로 요청이 올때 실행할 post_create를 만들어준다.
+
+```python
+def post_create(request):
+	# 요청의 method가 'GET'일 경우
+    if request.method == 'GET':
+        context = {
+
+        }
+        return render(request, 'blog/post_create.html', context)
+        
+    # 요청의 method가 'POST'일 경우 
+    elif request.method == 'POST':
+    	# request.POST 값은 딕셔너리로 나온다.
+        data = request.POST
+        title = data['title']
+        text = data['text']
+        user = User.objects.first()
+       # 데이터베이스에 위 값으로 데이터를 쓴다.
+        post = Post.objects.create(
+            text=text,
+            title=title,
+            author=user,
+            )
+       # 요청 처리가 완료되면 post_detail url+pk를 리버스로 가지고 와서 redirect
+       # url dispatcher
+        return redirect('post_detail', pk=post.pk)
+```
+
+(3) post_create.html에 보여줄 화면을 만든다.
+
+```html
+{% extends 'blog/base.html' %}
+{% block content %}
+<form action="" method="POST">
+    {# 응답이 적잘한 사용자에게서 왔는지 확인한다. 해킹방지 #}
+    {% csrf_token %}
+    <input name="title" type="text">
+    <textarea name="text" id="" row="10" cols="100"></textarea>
+    
+    {# submit 타입의 버튼은 form의 내용을 POST라는 매서드로 서버로 보낸다. #}
+    <button type="submit">Add post</button>
+</form>
+{% endblock %}
+```
+
+(4) 장고 폼을 적용하기 위해 blog/forms.py 파일 생성
+- blog app에 사용될 form들을 관리하는 파일
+
+```python
+# blog/forms.py
+# django의 forms를 import
+from django import forms
+
+# post_create에서 사용할 form을 정의하는 클래스 생성 
+class PostCreateForm(forms.Form):
+    title = forms.CharField(
+        label='제목',
+        max_length = 10,
+        required = True,
+        widget=forms.TextInput(
+            attrs = {
+                'class': 'form-control',
+            }
+        )
+    )
+    text = forms.CharField(
+        label='내용',
+        widget = forms.Textarea(
+            attrs = {
+                'class': 'form-control',
+            }
+        ),
+        required = True
+    )
+```
+
+
+
+
+
 
 
 
