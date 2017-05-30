@@ -46,3 +46,37 @@ list = [5,3,4, 6, 8, 3, 2]
 print("평균값 : {}".format(average(list)))
 ```
 
+### 짝수와 홀수
+
+evenOrOdd 메소드는 int형 num을 매개변수로 받습니다.
+num이 짝수일 경우 "Even"을 반환하고 홀수인 경우 "Odd"를 반환하도록 evenOrOdd에 코드를 작성해 보세요.
+num은 0이상의 정수이며, num이 음수인 경우는 없습니다.
+
+```python
+def evenOrOdd(num):
+    if num%2:
+        s = "Odd"
+    else:
+        s = "Even"
+    return s
+
+#아래는 테스트로 출력해 보기 위한 코드입니다.
+print("결과 : " + evenOrOdd(3))
+print("결과 : " + evenOrOdd(2))
+```
+
+### 제일 작은 수 제거하기
+
+rm_small함수는 list타입 변수 mylist을 매개변수로 입력받습니다.
+mylist 에서 가장 작은 수를 제거한 리스트를 리턴하고, mylist의 원소가 1개 이하인 경우는 []를 리턴하는 함수를 완성하세요.
+예를들어 mylist가 [4,3,2,1]인 경우는 [4,3,2]를 리턴 하고, [10, 8, 22]면 [10, 22]를 리턴 합니다.
+
+```python
+def rm_small(mylist):
+    mylist.remove(min(mylist))
+    return mylist
+    
+my_list = [4, 3, 2, 1]
+print("결과 {} ".format(rm_small(my_list)))
+```
+
