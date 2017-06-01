@@ -82,8 +82,27 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
-
 ```
+
+- 모델 생성 시, 필드에 이름을 정해줄 수 있다.
+- ForeignKey 필드는 verbose_name 으로 정해준다. 위치 확인
+
+```python
+from django.db import models
+
+
+class Question(models.Model):
+    question_text = models.CharField('질문내용', max_length = 200)
+    pub_date = models.DateTimeField('발행일자')
+
+
+class Choice(models.Model):
+	# ForeignKey 필드는 verbose_name 으로 정해준다. 위치 확인
+    question = models.ForeignKey(Question, verbose_name = '해당 질문', on_delete = models.CASCADE)
+    choice_text = models.CharField('선택내용', max_length = 200)
+    votes = models.IntegerField('총 투표수', default = 0)
+```
+
 
 ### 4. 데이터베이스 설정
 
@@ -100,6 +119,24 @@ $ ./manage.py migrate (app name:생략하면 전체)
 
 - 클래스 1개가 1테이블
 - 데이터베이스 내용 확인은 SQLite Browser
+
+- 필드 추가한 뒤(blank=True, null=True없이), makemigrations 하면 에러 발생한다. default 값을 정해주거나 코드 수정
+
+#### 데이터베이스 버전 확인 (migrations)
+
+```
+$ ./manage.py showmigrations
+```
+
+#### 데이터베이스 롤백 rollback
+
+```
+# 0001_initial 상태로 되돌아가기
+$ ./manage.py migrate polls 0001_initial
+
+# 이후 버전을 삭제한다.
+$ rm polls/migrations/삭제할 버전의 py 파일
+```
 
 ### 5. 관리자
 
@@ -137,6 +174,39 @@ from blog import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),	# 기본주소/admin/ 으로 접속 시 admin.site.urls 실행
     url(r'^$', views.post_list), # 기본주소로 접속 시, views.post_list 실행
+]
+
+```
+  
+- 만들어진 app내에 urls.py를 만들어 app 별로 url을 관리할 수 있다.
+
+```python
+# mysite/urls.py
+
+from django.conf.urls import url, include
+from django.contrib import admin
+
+# polls.urls를 모듈로 불러와서 사용 가능하다. (동적)
+from polls import urls as polls_urls
+
+urlpatterns = [
+    url(r'^admin/', admin.site.urls),
+    # polls.urls를 모듈로 사용.
+    # url(r'^polls/', include('polls.urls')),
+    
+    # polls.urls를 모듈로 불러와서 사용 가능하다. (동적)
+    url(r'^polls/', include(polls_urls)),
+]
+
+
+# polls/urls.py
+
+from django.conf.urls import url
+from . import views
+# from polls import views
+
+urlpatterns = [
+    url(r'^$', views.index, name = 'index')
 ]
 ```
 
