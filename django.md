@@ -422,7 +422,6 @@ def post_list(request):
 
 ```python
 
-
 # django_app/static 폴더의 경로를 STATIC_DIR에 할당
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 
@@ -434,6 +433,7 @@ STATICFILES_DIRS = (
     STATIC_DIR,
 )
 ```
+
 (3) post_list.html에 아래 내용을 추가해 준다. (bootstrap 경로)
 
 ```html
@@ -586,6 +586,112 @@ class PostCreateForm(forms.Form):
 
 
 
+### requirements.txt 만들기
+
+- 프로젝트 가상환경에 설치된 pip 리스트를 문서로 만든다.
+
+```
+$ pip freeze > requirements.txt
+```
+
+### reformatting!
+
+### vim에서 ctrl+z로 강제 종료 되었을 때, `$ fg` + Enter 하면 restore 됨.
+  
+### url을 app 별로 관리
+ 
+```python
+# mysite/urls.py
+
+from django.conf.urls import url, include
+from django.contrib import admin
+
+# polls.urls를 모듈로 불러와서 사용 가능하다. (동적)
+from polls import urls as polls_urls
+
+urlpatterns = [
+    url(r'^admin/', admin.site.urls),
+    # polls.urls를 모듈로 사용.
+    # url(r'^polls/', include('polls.urls')),
+    
+    # polls.urls를 모듈로 불러와서 사용 가능하다. (동적)
+    url(r'^polls/', include(polls_urls)),
+]
+```
+
+### git에 tag 달기
+
+```
+# tag 만들기
+$ git tag -a part1 -m "DjangoTutorial Part1"
+
+# tag push
+$ git push origin part1
+```
+
+### html label tag
+
+- label 테그 사이에 있는 텍스트를 클릭했을때 for의 값을 id로 가진 input tag를 선택하거나 해제한다.
+
+```html
+
+<input type="radio" name="choice" id="choice{{ forloop.counter }} value="{{ choice.id }}>
+
+<label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+
+```
+
+### git tag
+
+```
+# make tag
+$ git tag -a [tag_name] -m "message"
+
+# push tag
+$ git push origin [tag_name]
+```
+
+### message framwork
+
+- request에 담겨있던 메세지를 저장해놓고 response 할때 그 메세지를 담아서 보내줄 수 있다
+
+### base.html 만들기
+
+- 각 html 에서 반복되는 부분(hrader 등)을 base.html로 만들어 따로 빼놓는다.
+
+```html
+# base.html
+# 다른 html 파일의 내용이 들어가야 하는 부분 설정
+{% block content %}
+{% endblock %}
+
+
+# 다른 html files
+# 상단에 base.html 을 가지고 올 것을 설정
+{% extends 'polls/base.html' %}
+# block 부분 설정
+{% block content %}
+< 태그들....>
+{% endblock %}
+```
+
+- base.html 파일을 만든 뒤, static/css 설정
+
+``` python
+# settings.py 에 static 폴더 패스 지정
+STATIC_DIR = os.path.join(BASE_DIR, 'static')
+
+STATICFILES_DIRS = [
+	STATIC_DIR,
+	]
+```
+
+```html
+# base.html 의 최상단에 적어준다.
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+```
 
 
 
