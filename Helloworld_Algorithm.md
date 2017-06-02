@@ -204,3 +204,38 @@ def alpha_string46(s):
 print( alpha_string46("a234") )
 print( alpha_string46("1234") )
 ```
+
+### 문자열 내 p와 y의 개수
+
+numPY함수는 대문자와 소문자가 섞여있는 문자열 s를 매개변수로 입력받습니다.
+s에 'p'의 개수와 'y'의 개수를 비교해 같으면 True, 다르면 False를 리턴하도록 함수를 완성하세요. 'p', 'y' 모두 하나도 없는 경우는 항상 True를 리턴합니다.
+예를들어 s가 "pPoooyY"면 True를 리턴하고 "Pyy"라면 False를 리턴합니다.
+
+```python
+def numPY(s):
+    s_lower = s.lower()
+    if s_lower.count('p') == s_lower.count('y'):
+        return True
+    else:
+        return False
+
+print( numPY("pPoooyY") )
+print( numPY("Pyy") )
+```
+
+### 문자열 내 마음대로 정렬하기
+
+strange_sort함수는 strings와 n이라는 매개변수를 받아들입니다.
+strings는 문자열로 구성된 리스트인데, 각 문자열을 인덱스 n인 글자를 기준으로 정렬하면 됩니다.
+
+예를들어 strings가 ["sun", "bed", "car"]이고 n이 1이면 각 단어의 인덱스 1인 문자 u, e ,a를 기준으로 정렬해야 하므로 결과는 ["car", "bed", "sun"]이 됩니다.
+strange_sort함수를 완성해 보세요.
+
+```python
+def strange_sort(strings, n):
+    s = sorted(strings, key = lambda strings: strings[n])
+    return s
+
+print( strange_sort(["sun", "bed", "car"], 1) )
+```
+
