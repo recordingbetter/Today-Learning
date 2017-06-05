@@ -800,3 +800,159 @@ class Supplier(Place):
         
 ### 모델 상속 3. Proxy models
 
+
+        
+        
+- 테이블을 가지고 있는 부모 모델 클래스는 상속받되 자식 모델은 테이블을 만들 필요가 없는 경우
+- proxy 모델(자식 모델)을 이용해서 부모 모델의 객체를 만들고 수정, 삭제...(부모 테이블 상에서)
+- 부모(원본)모델의 설정 변경없이 proxy(자식)모델에서 설정 변경 가능
+- 자식 모델의 Meta 클래스에 `proxy=True` 로 선언
+
+
+        
+        
+```python
+from django.db import models
+
+class Person(models.Model):
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
+
+# Person 클래스를 상속받는 클래스의 Meta 클래스에 proxy = True 선언 --> proxy model이 된다.
+class MyPerson(Person):
+    class Meta:
+        proxy = True
+
+    def do_something(self):
+        ...
+        pass
+
+
+# Person 테이블에 추가된 레코드를 MyPerson 클래스로 조회 가능
+>>> p = Person.objects.create(first_name="foobar")
+>>> MyPerson.objects.get(first_name="foobar")
+<MyPerson: foobar>
+
+
+# 기본 옵션 재정의 가능(정렬 등..)
+class OrderedPerson(Person):
+    class Meta:
+        ordering = ["last_name"]
+        proxy = True
+
+```
+        
+        
+        
+- 어떤 모델 클래스로 쿼리 했는지에 따라 객체의 타입이 결정된다. proxy model의 속성들은 부모 모델이 영향을 주지 않음.
+- proxy 모델은 추상클래스가 아닌 하나의 모델만 상속받을 수 있다.(Meta 옵션 상속받음)
+- 추상클래스를 상속받을 경우 그 추상클래스가 필드를 가지지 않아야 하며. 이 경우 몇개든 상속 가능.
+  
+
+
+        
+    
+
+        
+### 모델 상속 3-1. Proxy models manager
+
+
+        
+        
+- proxy 모델에 manager를 지정하지 않은 경우 부모의 manager를 상속받는다.
+  
+
+
+        
+        
+```python
+# 기본 manager 변경 방법
+from django.db import models
+
+class Person(models.Model):
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
+
+class NewManager(models.Manager):
+    ...
+    pass
+
+# Person을 상속받지만 새로운 매니저 지정
+class MyPerson(Person):
+    objects = NewManager()
+
+    class Meta:
+        proxy = True
+
+```
+        
+        
+        
+
+# 부모의 클래스의 manager를 상속받되, 새로운 manager를 추가하려면 추상클래스에 새로운 manager를 선언하고 그 클래스를 상속받는다.
+
+```python
+from django.db import models
+
+class Person(models.Model):
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
+
+# NewManager가 될 새로운 추상클래스 선언
+class ExtraManagers(models.Model):
+    secondary = NewManager()
+
+    class Meta:
+        abstract = True
+
+class MyPerson(Person, ExtraManagers):
+    class Meta:
+        proxy = True
+```  
+
+
+        
+    
+
+        
+### 모델 상속 3-2. Differences between proxy inheritance and unmanaged models
+
+
+        
+        
+#### unmanaged model
+
+- 자동으로 테이블을 생성하지 않게 `managed=False`옵션을 준 모델은 proxy 클래스와는 다르다.
+- 원본테이블이 변경될 때마다 데이터베이스 테이블을 직접 생성, 수정해야한다.
+- 원본 모델의 manager와 상관없음. 자체 모델의 manager 선언을 따름.
+
+
+#### proxy model
+
+- 원본 모델이 변경되어도 수정할 필요 없다.
+- 원본 모델의 디폴트 manager를 포함한 모든 manager를 상속받는다.  
+
+
+        
+        
+        
+        
+#### 두가지 옵션의 사용
+
+- 만약에 당신이 이미 존재하는 모델이나 데이터베이스 테이블을 참조하되, 원본 테이블의 모든 컬럼이 필요하지 않다면, Meta.managed=False 옵션을 사용하세요. Django에 의해 제어되지 않는 데이터베이스 뷰나 테이블을 사용하는 경우에 유용합니다.
+
+- 만약에 기존 모델의 파이썬 코드들을 오버라이드 하되, 원본 모델과 동일한 필드를 가지도록 하고 싶다면 Meta.proxy=True 옵션을 사용하세요.  
+
+
+        
+    
+
+        
+### 모델 상속 3-3. 다중 상속 Multiple Inheritance
+
+
+        
+        
+- 파이썬의 `name resolution rules`이 적용된다.
+- 부모가 여럿일때 첫번째 부모의 Meta 클래스를 상속받는다.
+  
