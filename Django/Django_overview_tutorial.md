@@ -42,7 +42,7 @@ $ ./manage.py runserver
 
 ```shell
 # 프로젝트 폴더 내에 blog app을 추가한다.
-$ ./manage.py startapp blog
+$ django-admin startapp blog
 ```
 
 ```python
