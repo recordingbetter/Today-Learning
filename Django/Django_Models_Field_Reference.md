@@ -262,5 +262,6 @@ class MyUUIDModel(models.Model):
 
 - 일대일 관계. ForeignKey와 비슷하지만 관계를 반대로 봤을때 1개의 객체만 반환한다.
 - 어떤 모델을 확장할때 유용하다.
+- 다른 모델을 불러와서 사용 가능
 
 

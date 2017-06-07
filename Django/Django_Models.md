@@ -500,7 +500,7 @@ class Person(models.Model):
 
         
         
-- 모델 클래스에 자동으로 주어지는 메서드들을 필요한 기능으로 override 할 수 있다.
+- 모델 클래스에 자동으로 주어지는 메서드들을 필요한 기능으로 override 할 수 있다.(save, delete 등..)
 - `__str__()` : 클래스가 출력되면 필요한 데이터가 나올 수 있게 한다.
 - `get_absolute_url()` : 해당 모델 객체의 URL을 계산한다. 모델 객체를 url로 표현하는 경우 사용. 모델 객체가 유일한 URL을 가지는 경우에 이 메서드를 구현해주어야 한다.
   
@@ -518,7 +518,10 @@ class Blog(models.Model):
    # 저장 시, 특정한 동작을 수행하기 위해 save()를 재정의
     def save(self, *args, **kwargs):
         do_something()
+        
+        # super는 override하기 전 원래 동작을 수행. Python3에서는 인자 생략 가능.
         super(Blog, self).save(*args, **kwargs) # Call the "real" save() method.
+        # save 이후의 동작을 지정
         do_something_else()
 
 
@@ -541,8 +544,21 @@ class Blog(models.Model):
 - 생성이나 수정은 오버라이드된 메서드 실행 불가능.
   
 
+### SQL
 
-        
+
+```python
+class Person(models.Model):
+    first_name = models.CharField(...)
+    last_name = models.CharField(...)
+    birth_date = models.DateField(...)
+    
+    # SQL 사용 가능
+>>> for p in Person.objects.raw('SELECT * FROM myapp_person'):
+...     print(p)
+John Smith
+Jane Jones
+```        
     
 
         
@@ -661,12 +677,14 @@ class Student(CommonInfo):
 
 
         
-        
+- 이름을 부여하지 않으면 (class의 소문자 이름)_set        
 - 관계에 이름을 부여할 수 있다. (related_name)
 - 관계를 가지는 테이블 별로 다른 related_name을 가져야 한다.
 - 추상클래스의 관계 필드에 related_name이 지정되었을 경우, 자식 클래스들이 같은 related_name을 가질 수 있다.
 - '%(class)s' 는 자식 클래스의 소문자화된 이름으로 치환.
 - '%(app_label)s'는 자식 클래스가 선언된 앱의 소문자 이름.  
+- related_query_name는 역참조할때 적는 이름
+
 
 
         
@@ -700,6 +718,25 @@ from common.models import Base
 class ChildB(Base):
     pass
 
+```
+
+```python
+# related_name & related_query_name
+
+class Car(models.Model):
+    name = models.CharField(max_length = 40)
+    manufacturer = models.ForeignKey(
+    	ManuFacturer, 
+    	on_delete = models.CASCADE,
+    	related_name = 'cars',
+    	related_query_name = 'manufacturer_car'
+    	)
+ 
+ >>> m.cars
+ --> car의 매니저가 호출됨
+ 
+ >>> Manufacturer.objects.filter(manufacturer_car__name__contains="3")
+ --> 3이 들어가는 이름의 차를 가진 Manufacturer를 역참조
 ```
         
         
@@ -807,6 +844,8 @@ class Supplier(Place):
 - proxy 모델(자식 모델)을 이용해서 부모 모델의 객체를 만들고 수정, 삭제...(부모 테이블 상에서)
 - 부모(원본)모델의 설정 변경없이 proxy(자식)모델에서 설정 변경 가능
 - 자식 모델의 Meta 클래스에 `proxy=True` 로 선언
+- 필드를 만들 수 없다.
+- 한 테이블의 속성을 나눠서 관리하고 싶을때 사용.
 
 
         
@@ -889,7 +928,7 @@ class MyPerson(Person):
         
         
 
-# 부모의 클래스의 manager를 상속받되, 새로운 manager를 추가하려면 추상클래스에 새로운 manager를 선언하고 그 클래스를 상속받는다.
+#### 부모의 클래스의 manager를 상속받되, 새로운 manager를 추가하려면 추상클래스에 새로운 manager를 선언하고 그 클래스를 상속받는다.
 
 ```python
 from django.db import models
@@ -956,3 +995,7 @@ class MyPerson(Person, ExtraManagers):
 - 파이썬의 `name resolution rules`이 적용된다.
 - 부모가 여럿일때 첫번째 부모의 Meta 클래스를 상속받는다.
   
+  
+#### mix-in
+ 
+- 타임스탬프 믹스인은 created_timestamp, modified_timestamp를 가짐
