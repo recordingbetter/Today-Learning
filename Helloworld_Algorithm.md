@@ -301,3 +301,47 @@ def string_middle(str):
 
 print(string_middle("test"))
 ```
+
+### 행렬의 덧셈
+
+행렬의 덧셈은 행과 열의 크기가 같은 두 행렬의 같은 행, 같은 열의 값을 서로 더한 결과가 됩니다. 2개의 행렬을 입력받는 sumMatrix 함수를 완성하여 행렬 덧셈의 결과를 반환해 주세요.
+
+예를 들어 2x2 행렬인 A = ((1, 2), (2, 3)), B = ((3, 4), (5, 6)) 가 주어지면, 같은 2x2 행렬인 ((4, 6), (7, 9))를 반환하면 됩니다.(어떠한 행렬에도 대응하는 함수를 완성해주세요.)
+
+```python
+def sumMatrix(A,B):
+    answer = []
+    for i in range(0, len(A)):
+        answer_pre = []
+        for j in range(0, len(B)):
+            answer_pre.append(A[i][j]+B[i][j])
+        answer.append(answer_pre)
+    return answer
+
+print(sumMatrix([[1,2], [2,3]], [[3,4],[5,6]]))
+```
+
+### 피보나치 수
+
+피보나치 수는 F(0) = 0, F(1) = 1일 때, 2 이상의 n에 대하여 F(n) = F(n-1) + F(n-2) 가 적용되는 점화식입니다. 2 이상의 n이 입력되었을 때, fibonacci 함수를 제작하여 n번째 피보나치 수를 반환해 주세요. 예를 들어 n = 3이라면 2를 반환해주면 됩니다.
+
+```python
+
+```
+
+
+### 약수의 합
+
+어떤 수를 입력받아 그 수의 약수를 모두 더한 수 sumDivisor 함수를 완성해 보세요.   
+예를 들어 12가 입력된다면 12의 약수는 [1, 2, 3, 4, 6, 12]가 되고, 총 합은 28이 되므로 28을 반환해 주면 됩니다.
+
+```python
+def sumDivisor(num):
+    answer = []
+    for i in range(1, num+1):
+        if num % i == 0:
+            answer.append(i)
+    return sum(answer)
+
+print(sumDivisor(12))
+```

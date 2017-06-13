@@ -153,6 +153,7 @@ SELECT * FROM blog_entry WHERE pub_date <= '2006-01-01';
 ### 관계를 통한 조회
 
 - 두 모델의 관계를 통해 쿼리셋을 가지고 올 수 있다.
+- relates_query_name
 
 ```
 # Blog 모델의 이름이 Beatles Blog인 데이터과 관계있는 Entry 객체 반환
@@ -181,7 +182,20 @@ SELECT * FROM blog_entry WHERE pub_date <= '2006-01-01';
 # Entry 모델의 headline 필드에 Lennon을 포함하고, pub_date의 연도가 2008년인 Blog 객체
 >>> Blog.objects.filter(entry__headline__contains='Lennon', entry__pub_date__year=2008)
 
+# Entry 모델의 headline 필드에 Lennon을 포함하는 Blog 객체를 pub_date가 2008인 Blog 객체를 다시 필터링.
 >>> Blog.objects.filter(entry__headline__contains='Lennon').filter(entry__pub_date__year=2008)
+
+# 비교 : filter의 and 연산
+>>> Blog.objects.filter(Q(entry__headline__contains='Lennon') & Q(entry__pub_date__year=2008))
+
+
+# exlude 참고
+>>> Blog.objects.exclude(entry__headline__contains='Lennon', entry__pub_date__year=2008,)
+
+>>> Blog.objects.exclude(entry__in=Entry.objects.filter(headline__contains='Lennon', pub_date__year=2008,),)
+
+# 2가지 모두를 만족하는 값만 제외
+>>> Blog.objects.exclude(entry__in=Entry.objects.filter(headline__contains='Lennon', pub_date__year=2008))
 ```
 
 ### 필터는 모델을 참조할 수 있다.
@@ -233,8 +247,95 @@ F('somefield').bitand(16)
 - iexact, contains, icontains, startswith, istartswith, endswith, iendswith 에서 와일드카드 `%` 사용가능
 - `%`는 여러 문자 와일드 카드를 나타내며 `_`는 한 문자 와일드 카드를 나타냅니다.
 
+### 캐시
 
+- 쿼리셋을 변수에 지정하면 캐시에 저장해서 사용한다.
+- 인덱스를 사용할 경우 캐시하지 않고 데이터베이스를 검색한다.
 
+### Q object
+
+- Q로 필터 단위를 묶을 수 있다.
+- 필터 값을 저장한다.
+- &(and), |(or) 연산이 가능하다.
+- Q 연산이 항상 앞에 와야한다.
+
+```
+Q(question__startswith='Who') | Q(question__startswith='What')
+# 아래 쿼리와 같다.
+WHERE question LIKE 'Who%' OR question LIKE 'What%'
+
+# 사용 예
+Poll.objects.get(
+    Q(question__startswith='Who'),
+    Q(pub_date=date(2005, 5, 2)) | Q(pub_date=date(2005, 5, 6))
+)
+```
+
+### 객체 비교
+
+- 객체끼리 비교할 때에는 pk를 비교한다.
+
+### delete()
+
+- 삭제하면서 삭제되는 값 반환
+
+```
+>>> e.delete()
+(1, {'weblog.Entry': 1})
+
+# 쿼리셋으로 삭제 가능
+>>> Entry.objects.filter(pub_date__year=2005).delete()
+(5, {'webapp.Entry': 5})
+
+# 한꺼번에 여러개를 삭제할 때에는 쿼리셋으로 삭제
+>>> Entry.objects.all().delete()
+
+# 이건 안된다.
+>>> Entry.objects.delete()
+```
+
+### 모델 인스턴스 복사
+
+- 불러온 인스턴스에 pk값을 지우고 저장하면 새로운 인스턴스로 저장된다.
+
+```
+blog = Blog(name='My blog', tagline='Blogging is easy')
+blog.save() # blog.pk == 1
+
+blog.pk = None
+blog.save() # blog.pk == 2
+```
+
+### 여러 객체의 update()
+
+- 여러 객체의 값을 변경할 수 있다.
+- 저장하지 않는다. save() 따로 해야한다.
+- 관계된 테이블의 데이터까지 지원하진 않음.
+
+```
+# Update all the headlines with pub_date in 2007.
+Entry.objects.filter(pub_date__year=2007).update(headline='Everything is the same')
+
+# 여러 객체 저장
+for item in my_queryset:
+    item.save()
+```
+
+### 관계된 객체
+
+- select_related()
+
+```
+# print 할때 데이터베이스에서 데이터를 가지고 온다.
+>>> e = Entry.objects.get(id=2)
+>>> print(e.blog)  # Hits the database to retrieve the associated Blog.
+>>> print(e.blog)  # Doesn't hit the database; uses cached version.
+
+# 변수에 쿼리셋을 할당할때 데이터베이스에서 데이터를 가지고 온다.
+>>> e = Entry.objects.select_related().get(id=2)
+>>> print(e.blog)  # Doesn't hit the database; uses cached version.
+>>> print(e.blog)  # Doesn't hit the database; uses cached version.
+```
 
 
 
