@@ -77,7 +77,7 @@ $ ./manage.py shell_plus
 - app 디렉토리 안에 models라는 모듈 패키지 디렉토리를 만들고, 클래스 별로 파이썬 파일을 만들고
 - 모듈 패키지 디렉토리의 `__inint__` 파일에 클래스들을 import.
 
-### ipython sell auto reload
+### ipython shell auto reload
 
 ```
 $ %load_ext autoreload
@@ -116,7 +116,7 @@ shell 에서...
  - --fake 옵션으로 migrate (장고에서는 문제가 해결된걸로 인식)
  - migrate 이후에 Meta 속성을 지우고 다시 migrate하면 같은 구조로 생성된 클래스 이름으로 테이블 이름이 변경된다.
 
-```
+```python
 class 새로운 모델:
 like_post = models.ForeignKey(Post, db_column = 'post_id')
 
@@ -147,7 +147,7 @@ $ pym migrate [app 이름] [돌리고싶은 마이스레이션 이름]
  
 ### 중간테이블에 오브젝트 생성
 
-```
+```python
 # Post 클래스와 User 클래스를 FK로 가지는 중간 테이블 PostLike에 데이터 생성
 # p2는 Post의 객체, u2는 User의 객체  
 $ PostLike.objects.create(post = p2, user = u2)
@@ -161,6 +161,7 @@ $ u1.like_posts
 
 ### 구조
 
+```
 기능들
 	회원관리 모듈 (member/)
 		로그인
@@ -182,7 +183,7 @@ $ u1.like_posts
 	알림 관련 모듈 (noti/)
 		팔로워의 글 등록 알림
 		댓글 알림
-	
+```	
 
 ## Common Web application 
 
@@ -193,7 +194,7 @@ $ u1.like_posts
 
 #### 기본 유저 모델을 사용
 
-```
+```python
 from django.contrib.auth.models import User
 ```
 
@@ -204,20 +205,21 @@ from django.contrib.auth.models import User
 #### 1. 가장 쉬운 방법
 
 1) 새로운 모델 member를 만들고 settings.py에 아래 내용 추가
-```
+
+```python
 AUTH_USER_MODEL = 'member.User'
 ```
 
 2) post app model에서 사용되었던 User를 `settings.AUTH_USER_MODEL`로 변경 -> 이후 User 모델이 변경되어도 적용하기 편하다.(커스터마이징과 별개)
 
-```
+```python
 # post.models.py에 settings.AUTH_USER_MODEL를 사용하기 위해 setting import
 from django.conf import settings
 ```
 
 3) 새로운 앱 member의 User 모델은 AbstractUser 상속받음
 
-```
+```python
 from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
@@ -225,9 +227,20 @@ class User(AbstractUser):
 ```
 
 4) 이전의 모든 migration 파일을 삭제하고 migrate
+5) models.py 파일에서 
 
+```python
+from django.conf import settings
+# User를 모두 settings.AUTH_USER_MODEL로 변경
+```
+6) post.views.py 파일에서
 
+```python
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
+```
+[https://docs.djangoproject.com/en/1.11/topics/auth/customizing/#django.contrib.auth.get_user_model](https://docs.djangoproject.com/en/1.11/topics/auth/customizing/#django.contrib.auth.get_user_model)
 
 
 ### 사용 방법
@@ -236,7 +249,7 @@ class User(AbstractUser):
 1. INSTALLED_APPS에 'django.contrib.auth', 'django.contrib.contenttypes' 추가
 2. MIDDLEWARE에 SessionMiddleware, AuthenticationMiddleware
 
-```
+```python
 from django.contrib.auth.models import User
 
 
@@ -260,7 +273,6 @@ $ Comment.objects.create(post = p1, author = u2, content = 'making another repla
 # 댓글 확인
 $ p1.comment_set.all()
 
-
 ```
 
 ## ImageField
@@ -278,6 +290,34 @@ $ brew install libtiff libjpeg webp little-cms2
 $ pip install Pillow
 ```
 
+### image 파일을 저장하기 위한 media 폴더 지정하기
+
+- 루트폴더 하위에 media 폴더 생성
+
+```python
+# config.settings.py에 media 폴더 위치를 지정해준다.
+MEDIA_URL = '/media/'
+# django_app/media
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# config.urls.py 파일에 아래 내용 추가
+# static 함수는 리스트를 반환하므로 기존 urlpatterns 에 더해준다.
+# ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
+# 위 내용과 같다.
+urlpatterns += static(
+    prefix=settings.MEDIA_URL,
+    document_root=settings.MEDIA_ROOT
+)
+
+# post.models.py 에서 모델클래스 설정시 이미지 파일 저장 위치 지정
+class Post(models.Model):
+    photo = models.ImageField(blank=True, upload_to='post', )
+# 파일은 media/post 에 저장된다.
+```
+
+
+
+
 #### Pycharm에서 클래스, 함수 등 사용된 부분 찾기
 
 **shift+command+F**
@@ -290,7 +330,7 @@ $ pip install Pillow
 - 조건에 주어진 객체가 발경되면, 해당객체의 값을 튜플과 False 반환.
 - 조건에 주어진 객체가 발견되지 않으면 새 객체를 생성(defaults 값 반영)하고 저장한다. 새 객체의 값의 튜플과 True를 반환
 
-```
+```python
 # 있으면 True, 없으면 False + 객체 생성
 tag, tag_created = Tag.objects.get_or_create(name = tag_name)
 
@@ -321,7 +361,7 @@ obj, created = Person.objects.get_or_create(
 
 - ManyToMany 관계에서 중간자 모델에 데이터 만들기
 
-```
+```python
 # Post, User가 ManyToMany 관계일때
 p = Post.objects.get(pk=1)
 u = User.objects.get(pk=2)
