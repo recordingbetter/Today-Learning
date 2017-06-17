@@ -370,3 +370,52 @@ u = User.objects.get(pk=2)
 p.postlike_set.create(user = u)
 ```
 
+### Model Field & Form Field
+
+[https://docs.djangoproject.com/en/1.11/topics/forms/modelforms/#field-types](https://docs.djangoproject.com/en/1.11/topics/forms/modelforms/#field-types)
+
+### bound & unbound form
+
+- bound : 데이터가 채워져 있는 폼 생성
+- unbound : 빈칸으로 폼 생성
+
+### CONTEXT_PROCESSORS
+
+- TEMPLATE_CONTEXT_PROCESSORS :모든 template에서 사용할 수 있는 변수
+- 이미 있는 것을 쓸 수도 있고, 만들 수도 있다.
+
+1) context_processors.py 파일을 만들고
+
+```python
+from .forms import LoginForm
+
+
+def forms(request):
+    context = {
+        'login_form': LoginForm(),
+        }
+    return context
+```
+
+2) settings.py의 TEMPLATES에 추가
+
+```python
+# settings.py 일부
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [TEMPLATE_DIR],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+                # context_processors 추가
+                'member.context_processors.forms',
+            ],
+        },
+    },
+]
+```
