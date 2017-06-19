@@ -345,3 +345,71 @@ def sumDivisor(num):
 
 print(sumDivisor(12))
 ```
+
+### 하샤드수
+
+양의 정수 x가 하샤드 수이려면 x의 자릿수의 합으로 x가 나누어져야 합니다. 예를들어 18의 자릿수 합은 1+8=9이고, 18은 9로 나누어 떨어지므로 18은 하샤드 수입니다.
+
+Harshad함수는 양의 정수 n을 매개변수로 입력받습니다. 이 n이 하샤드수인지 아닌지 판단하는 함수를 완성하세요.
+예를들어 n이 10, 12, 18이면 True를 리턴 11, 13이면 False를 리턴하면 됩니다.
+
+```python
+def Harshad(n):
+    str_n = str(n)
+    l = len(str_n)
+    sum = 0
+    i = 0
+    while i < l:
+        sum += int(str_n[i])
+        i += 1
+    return True if n % sum == 0 else False
+
+print(Harshad(12))
+```
+
+
+### JadenCase문자열 만들기
+
+Jaden_Case함수는 문자열 s을 매개변수로 입력받습니다.
+s에 모든 단어의 첫 알파벳이 대문자이고, 그 외의 알파벳은 소문자인 문자열을 리턴하도록 함수를 완성하세요
+예를들어 s가 "3people unFollowed me for the last week"라면 "3people Unfollowed Me For The Last Week"를 리턴하면 됩니다.
+
+
+```python
+def Jaden_Case(s):
+    l = s.split()
+    sl = []
+    for i in range(0, len(l)):
+        sl.append(l[i].capitalize())
+    s = ' '.join(sl)
+    return s  
+
+print(Jaden_Case("3people unFollowed me for the last week"))
+```
+
+```python
+def Jaden_Case(s):
+    return s.title()  
+    
+print(Jaden_Case("3people unFollowed me for the last week"))
+```
+
+### 자연수를 뒤집어 리스트로 만들기
+
+digit_reverse함수는 양의 정수 n을 매개변수로 입력받습니다.
+n을 뒤집어 숫자 하나하나를 list로 표현해주세요
+예를들어 n이 12345이면 [5,4,3,2,1]을 리턴하면 됩니다.
+
+
+```python
+def digit_reverse(n):
+    lenth = len(str(n)) - 1
+    n_list = []
+    while lenth >= 0:
+        n_list.append(int(str(n)[lenth]))
+        lenth -= 1
+    return n_list
+
+print("결과 : {}".format(digit_reverse(12345)));
+```
+
