@@ -346,27 +346,7 @@ def sumDivisor(num):
 print(sumDivisor(12))
 ```
 
-### 하샤드수
-
-양의 정수 x가 하샤드 수이려면 x의 자릿수의 합으로 x가 나누어져야 합니다. 예를들어 18의 자릿수 합은 1+8=9이고, 18은 9로 나누어 떨어지므로 18은 하샤드 수입니다.
-
-Harshad함수는 양의 정수 n을 매개변수로 입력받습니다. 이 n이 하샤드수인지 아닌지 판단하는 함수를 완성하세요.
-예를들어 n이 10, 12, 18이면 True를 리턴 11, 13이면 False를 리턴하면 됩니다.
-
-```python
-def Harshad(n):
-    str_n = str(n)
-    l = len(str_n)
-    sum = 0
-    i = 0
-    while i < l:
-        sum += int(str_n[i])
-        i += 1
-    return True if n % sum == 0 else False
-
-print(Harshad(12))
-```
-
+## Level 2
 
 ### JadenCase문자열 만들기
 
@@ -394,6 +374,27 @@ def Jaden_Case(s):
 print(Jaden_Case("3people unFollowed me for the last week"))
 ```
 
+### 하샤드수
+
+양의 정수 x가 하샤드 수이려면 x의 자릿수의 합으로 x가 나누어져야 합니다. 예를들어 18의 자릿수 합은 1+8=9이고, 18은 9로 나누어 떨어지므로 18은 하샤드 수입니다.
+
+Harshad함수는 양의 정수 n을 매개변수로 입력받습니다. 이 n이 하샤드수인지 아닌지 판단하는 함수를 완성하세요.
+예를들어 n이 10, 12, 18이면 True를 리턴 11, 13이면 False를 리턴하면 됩니다.
+
+```python
+def Harshad(n):
+    str_n = str(n)
+    l = len(str_n)
+    sum = 0
+    i = 0
+    while i < l:
+        sum += int(str_n[i])
+        i += 1
+    return True if n % sum == 0 else False
+
+print(Harshad(12))
+```
+
 ### 자연수를 뒤집어 리스트로 만들기
 
 digit_reverse함수는 양의 정수 n을 매개변수로 입력받습니다.
@@ -413,3 +414,34 @@ def digit_reverse(n):
 print("결과 : {}".format(digit_reverse(12345)));
 ```
 
+### 이상한 문자만들기
+
+toWeirdCase함수는 문자열 s를 매개변수로 입력받습니다.
+문자열 s에 각 단어의 짝수번째 인덱스 문자는 대문자로, 홀수번째 인덱스 문자는 소문자로 바꾼 문자열을 리턴하도록 함수를 완성하세요.
+예를 들어 s가 "try hello world"라면 첫 번째 단어는 "TrY", 두 번째 단어는 "HeLlO", 세 번째 단어는 "WoRlD"로 바꿔 "TrY HeLlO WoRlD"를 리턴하면 됩니다.
+
+주의 문자열 전체의 짝/홀수 인덱스가 아니라, 단어(공백을 기준)별로 짝/홀수 인덱스를 판단합니다.
+
+```python
+def toWeirdCase(s):
+    words = s.split()
+    words_count = len(words)
+    words_list = []
+    i = 0
+    while i < words_count:
+        word = words[i]
+        word_new = ''
+        for j in range(0, len(word)):
+            letter = word[j]
+            word_new += letter.lower() if j%2 == 1 else letter.upper()
+        words_list.append(word_new)
+        i += 1
+    return ' '.join(words_list)
+```
+
+```python
+def toWeirdCase(s):
+    return " ".join(["".join([x.lower() if i%2 else x.upper() for i,x in enumerate(w)]) for w in s.split()])
+
+print("결과 : {}".format(toWeirdCase("try hello world")));
+```
