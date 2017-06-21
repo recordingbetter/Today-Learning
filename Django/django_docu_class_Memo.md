@@ -419,3 +419,74 @@ TEMPLATES = [
     },
 ]
 ```
+
+### require_POST
+
+- post 요청만 받게 하는 내장 데코레이터
+
+### login_required
+
+- 로그인이 되어 있을때만 함수를 실행하게하는 데코레이터
+
+
+### message framework
+
+- 일회성 메세지
+- request 단위로 메세지를 저장하고 전달할 수 있음
+
+### pagination
+
+[https://docs.djangoproject.com/en/1.11/topics/pagination/](https://docs.djangoproject.com/en/1.11/topics/pagination/)
+
+- 현재 페이지에 보여주는 데이터 수를 한정하여 페이지 번호를 생성
+
+```python
+# views.py
+
+def post_list(request):
+    all_posts = Post.objects.all()
+    # 전체 post 데이터로 Paginator 객체 생성. 1 페이지가 2개의 데이터만 보이게
+    p = Paginator(all_posts, 2)
+    # 현재 페이지
+    page = request.GET.get('page')
+    try:
+        posts = p.page(page)
+    # 페이지가 Int가 아닐 경우, (null 등)
+    except PageNotAnInteger:
+        posts = p.page(1)
+    # 페이지가 없을 경우 마지막 페이지로 이동
+    except EmptyPage:
+        posts = p.page(p.num_pages)
+
+    context = {
+        'posts': posts,
+        'comment_form': CommentForm(),
+        }
+    return render(request, 'post/post_list.html', context)
+```
+
+```html
+# post_list.html
+
+<div class="pages">
+	<!-- 이전 페이지가 있을 경우 -->
+    {% if posts.has_previous %}
+    	 <!-- 처음 페이지는 1페이지로 이동 -->
+        <a href="{{ request.path }}?page=1" class="btn">First Page</a>
+        <!-- 이전 페이지는 posts.previous_page_number 값으로 이동 -->
+        <a href="{{ request.path }}?page={{ posts.previous_page_number }}" class="btn">Previous {{ posts.previous_page_number}}</a>
+    {% endif %}
+    
+	 <!-- 현재 페이지 번호 표시 -->
+	 <a href="" class="btn">{{ posts.number }}</a>
+
+	 <!-- 다음 페이지가 있을 경우 -->
+    {% if posts.has_next %}
+    	 <!-- 다음 페이지는 posts.next_page_number 값으로 이동 -->
+        <a href="{{ request.path }}?page={{ posts.next_page_number }}" class="btn">Next {{ posts.next_page_number }}</a>
+        <!-- 마지막 페이지는 posts.paginator.num_pages 값으로 이동 -->
+        <!-- 마지막 페이지로 가는 버튼. num_pages는 paginator에서 호출할 수 있음 -->
+        <a href="{{ request.path }}?page={{ posts.paginator.num_pages }}" class="btn">Last Page</a>
+    {% endif %}
+</div>
+```
