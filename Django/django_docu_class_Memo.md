@@ -490,3 +490,69 @@ def post_list(request):
     {% endif %}
 </div>
 ```
+
+### QuerySet example
+
+```
+# 둘은 같음
+lhy.follower_relations.filter()
+Relation.objects.filter(to_user=lhy).filter()
+
+# 둘은 같음
+lhy.follow_relations.create(to_user=pby)
+Relation.objects.get_or_create(from_user=lhy, to_user=pby)
+```
+
+### OAuth
+
+- 사용자 로그인 인증 방식을 표준화 함.
+
+
+### Facebook Login
+
+1. settings.py에 app_id, secret code 기입
+2. a tag로 facebook에 로그인 리퀘스트를 보낸다.
+
+
+
+
+## Postgresql
+
+- pgAdmin 설치
+- 터미널에서...
+
+```
+# 사용자 만들기
+$ createuser [username]
+$ createuser -s(superuser) -p(password) [username]
+
+# 사용자 password 설정
+$ psql postgres
+psql (9.6.3)
+Type "help" for help.
+
+postgres=# \password joe	# set password
+Enter new password:
+Enter it again:
+postgres=# \q				# Quit
+
+postgres=# \help [command]			# help
+
+
+# database 생성
+pgAdmin -> create... server
+# 또는
+$ createdb --owner=joe instagram
+
+# sqlite DB의 post, member 모델의 데이터를 dump.json파일로 만듬
+./manage.py dumpdata --database=sqlite --indent=2 post member > dump.json
+
+# default DB의 post, member 모델의 데이터를 알아보기 쉽게 만들어 dump_from_postgresql.json 파일에 저장
+./manage.py dumpdata --indent=2 post member > dump_from_postgresql.json
+
+# loaddata 하기 전에 makemigrations / migrate
+
+# dump.json 파일에 있는 내용을 default DB에 저장됨
+./manage.py loaddata dump.json
+```
+
