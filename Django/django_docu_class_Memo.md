@@ -522,6 +522,14 @@ Relation.objects.get_or_create(from_user=lhy, to_user=pby)
 - 터미널에서...
 
 ```
+# postgresql 설치
+$ brew install postgresql
+
+# python library 설치
+$ pip install psycopg2
+
+# pgAdmin 설치 -> 웹사이트
+
 # 사용자 만들기
 $ createuser [username]
 $ createuser -s(superuser) -p(password) [username]
