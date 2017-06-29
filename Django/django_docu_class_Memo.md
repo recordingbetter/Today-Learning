@@ -512,7 +512,7 @@ Relation.objects.get_or_create(from_user=lhy, to_user=pby)
 
 1. settings.py에 app_id, secret code 기입
 2. a tag로 facebook에 로그인 리퀘스트를 보낸다.
-
+...
 
 
 
@@ -564,3 +564,31 @@ $ createdb --owner=joe instagram
 ./manage.py loaddata dump.json
 ```
 
+### requirements install
+
+```
+$ pip install -r requirements.txt
+```
+
+### django admin display customizing
+
+```
+# admin.py
+
+class MessageAdmin(admin.ModelAdmin):
+	list_display = (
+		[field_name],
+		[field_name],
+		)
+		
+	list_filter = (
+		[field_name],
+		[field_name],
+		)
+```	
+		
+### YouTube API
+
+### TDD Test-Driven-Development
+
+	
