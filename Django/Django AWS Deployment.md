@@ -113,8 +113,8 @@ Are you sure you want to continue connecting (yes/no)?
 #### 언어팩 설치 (선택사항 - 에러메세지가 한글로 나와서 검색이 어렵다)
 
 ```
-sudo apt-get install language-pack-ko
-sudo locale-gen ko_KR.UTF-8
+~ sudo apt-get install language-pack-ko
+~ sudo locale-gen ko_KR.UTF-8
 ```
 
 ## AWS User/Group 만들기
@@ -142,27 +142,27 @@ sudo locale-gen ko_KR.UTF-8
 #### python-pip설치
 
 ```
-sudo apt-get install python-pip
+~ sudo apt-get install python-pip
 ```
 
 #### zsh 설치
 
 ```
-sudo apt-get install zsh
+~ sudo apt-get install zsh
 ```
 
 
 #### oh-my-zsh 설치
 
 ```
-sudo curl -L http://install.ohmyz.sh | sh
+~ sudo curl -L http://install.ohmyz.sh | sh
 ```
 
 
 #### Default shell 변경
 
 ```
-sudo chsh ubuntu -s /usr/bin/zsh
+~ sudo chsh ubuntu -s /usr/bin/zsh
 ```
 
 #### pyenv requirements설치
@@ -170,20 +170,20 @@ sudo chsh ubuntu -s /usr/bin/zsh
 [공식문서](https://github.com/yyuu/pyenv/wiki/Common-build-problems)
 
 ```
-sudo apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev \
+~ sudo apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev \
 libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils
 ```
 
 #### pyenv 설치
 
 ```
-curl -L https://raw.githubusercontent.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash
+~ curl -L https://raw.githubusercontent.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash
 ```
 
 #### pyenv 설정 .zshrc에 기록
 
 ```
-vi ~/.zshrc
+~ vi ~/.zshrc
 
 # 아래 내용 추가
 export PATH="/home/ubuntu/.pyenv/bin:$PATH"
@@ -194,21 +194,22 @@ eval "$(pyenv virtualenv-init -)"
 ### Python 3.6.1 install
 
 ```
-$ pyenv install 3.6.1
+~ pyenv install 3.6.1
 ```
 
 ### AWS Command Line Interface 설치
 
 ```
-$ pip install awscli
+~ pip install awscli
+
 # 버전 확인
-$ aws --version
+~ aws --version
 ```
 
 ### AWS Configure
 
 ```
-$ aws configure
+~ aws configure
 AWS Access Key ID [None]: 만든 유저 키
 AWS Secret Access Key [None]: 만든 유저 키
 Default region name [None]: ap-northeast-2
@@ -220,7 +221,7 @@ Default output format [None]: json
 [공식문서](https://pillow.readthedocs.io/en/3.4.x/installation.html#basic-installation)
 
 ```
-sudo apt-get install libtiff5-dev libjpeg8-dev zlib1g-dev \
+~ sudo apt-get install libtiff5-dev libjpeg8-dev zlib1g-dev \
     libfreetype6-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python-tk
 ```
 
@@ -276,7 +277,6 @@ alias scp-ec2-ori="scp -i ~/.ssh/aws_joe.pem -r /Users/Joe/projects/django/deplo
 alias scp-ec2="delete-ec2 && scp-ec2-ori"
 ```
 
-
 ```
 # 해당 쉘의 환경변수 확인
 $ env
@@ -294,22 +294,21 @@ $ /managy.py renserver
 
 ```
 # 터미널에서 새 탭을 열지 않고 변경 사항 적용
-
 $ source ~/.zshrc
 ```
 
-### Nginx
+## Nginx
 
 ```
 # AWS에서 nginx user 설정
-$ sudo adduser nginx
+~ sudo adduser nginx
 ```
 
 ### uWSGI 설치 (가상환경 안에서)
 
 ```
 # AWS에서
-$ pip install uwsgi
+~ pip install uwsgi
 ```
 
 ### 프로젝트에서 wsgi 파일 분리
@@ -350,12 +349,11 @@ $ uwsgi --http :8000 --home ~/.pyenv/versions/deploy_ec2 --chdir /srv/deploy_ec2
 - local에서 테스트 중...
 
 ```
-# .config_secret/uwsgi/debug.ini
+# .config_secret/uwsgi/debug.ini에 아래 내용 작성
+
 [uwsgi]
 home = /usr/local/var/pyenv/versions/deploy_ec2
 chdir = /Users/Joe/projects/django/deploy_ec2/django_app
-# or
-chdir = $(HOME)/projects/django/deploy_ec2/django_app
 module = config.wsgi.debug
 http = :8000
 
@@ -366,7 +364,8 @@ $ uwsgi --ini .config_secret/uwsgi/debug.ini
 - AWS에서...
 
 ```
-# .config_secret/uwsgi/deploy.ini
+# .config_secret/uwsgi/deploy.ini에 아래 내용 작성
+
 [uwsgi]
 home = /usr/local/var/pyenv/versions/deploy_ec2
 chdir = /Users/Joe/projects/django/deploy_ec2/django_app
@@ -374,7 +373,7 @@ module = config.wsgi.deploy
 http = :8000
 
 # 실행하려면
-$ uwsgi --ini .config_secret/uwsgi/deploy.ini
+~ uwsgi --ini .config_secret/uwsgi/deploy.ini
 ```
 
 ### 프로젝트에 사용중인 static file을 지정한 폴더에 모아주는 명령
@@ -427,25 +426,27 @@ $ nginx -s stop
 #### Nginx 안정화 최신버전 사전세팅 및 설치
 
 ```
-sudo apt-get install software-properties-common python-software-properties
-sudo add-apt-repository ppa:nginx/stable
-sudo apt-get update
-sudo apt-get install nginx
+~ sudo apt-get install software-properties-common python-software-properties
+~ sudo add-apt-repository ppa:nginx/stable
+~ sudo apt-get update
+~ sudo apt-get install nginx
+
 # 버전 확인 
-nginx -v
+~ nginx -v
 ```
 
 #### user 추가
 
 ```
-$ sudo adduesr [username]
+~ sudo adduesr [username]
 ```
 
 #### Nginx 동작 User 변경
 
 ```
-$ sudo vi /etc/nginx/nginx.conf
+~ sudo vi /etc/nginx/nginx.conf
 
+# 아래 내용 수정
 user [username];
 
 server_names_hash_bucket_size 250;
@@ -460,17 +461,24 @@ server_names_hash_bucket_size 250;
 - nginx는 내부 가상버서를 돌려서 여러 도메일을 개별적으로 처리 가능
 
 ```
-/sites-available 
+# 현재 데이터(설정파일)를 가지고 있는 사이트들
+/etc/nginx/sites-available
 site a
 site b
 site c
 site d
 
-/sites-enable (서비스 중지, 파일은 보관)
+# 현재 서비스를 하고 있는 사이트들(b, c는 서비스 중지, 파일은 보관)
+/etc/nginx//sites-enable
 (symbolic link)site a
 (symbolic link)site d
 ```
 
+- 서비스할 사이트에 대해 설정 파일을 만들어준다.
+
+```
+# /etc/nginx/sites-available에 ec2 파일 생성하여 아래 내용 작성
+~ sudo vi /etc/nginx/sites-available/ec2
 
 server {
 			listen 80;
@@ -483,47 +491,104 @@ server {
 			include			uwsgi_params;
 			}
 }
+```
 
 #### http 요청 처리 방식
 
-- EC2 (http) (WSGI) -> Django
-- EC2 (http) uWSGI (WSGI) -> Django
-- EC2 (http) Nginx -> (UnixSocket) -> uWSGI (WSGI) -> Django
+- EC2 -> (http) -> Django
+- EC2 -> (http) -> uWSGI (WSGI) -> Django
+- EC2 -> (http) -> Nginx -> (uWSGI's UnixSocket) -> uWSGI (WSGI) -> Django
 
+#### uWSGI 파일 생성 (UnixSocket)
 
-
-
-$ sudo -u deploy /home/ubuntu/.pyenv/versions/deploy_ec2/bin/uwsgi --ini .config_secret/uwsgi/deploy.ini
-
-
-$ uwsgi --ini .config_secret/uwsgi/deploy/ini
-
-
-$ sudo rm default
-$ sudo ln -s ..sites-available/ec2 
-
-# uwsgi nginx 재시작
-$ sudo systemctl restart uwsgi nginx
-
-# uwsgi 시작
-$ sudo systemctl start uwsgi
-
-# uwsgi.service 상태(로그?) 확인
-$ sudo systemctl status uwsgi.service
-
-
-#### uWSGI 서비스 설정파일 작성
-
-$ sudo vi /etc/systemd/system/uwsgi.service
+- local Django project에서 
+- deploy_ec2/.config_secret/uwsgi/deploy.ini 파일 생성
 
 ```
+[uwsgi]
+home = /home/ubuntu/.pyenv/versions/deploy_ec2
+chdir = /srv/deploy_ec2/django_app
+module = config.wsgi_modules.deploy
+
+# 실행할 유저
+uid = deploy
+# 실행할 그룹
+gid = deploy
+
+# UnixSocket
+socket = /tmp/ec2.sock
+# 소켓 소유 권한
+chmod-socket = 666
+# 소켓 소유자 (유저:그룹)
+chown-socket = deploy:deploy
+
+enable-threads = true
+master = true
+pidfile = /tmp/ec2_pid
+
+# uwsgi가 종료되었을때 tmp/소켓 파일 자동 삭제
+vacuum = true
+```
+- local에 있는 프로젝트를 aws로 업로드
+
+```
+# alias 사용
+$ scp-ec2
+```
+
+- AWS에서 tmp 폴더의 권한을 변경
+
+```
+~ sudo chown -R deploy:deploy /tmp/
+```
+
+-  작성한 deploy.ini 파일을 실행 (요청을 받을 준비)
+
+```
+# 현재 유저가 tmp 폴더의 소유자일 경우
+~ uwsgi --ini .config_secret/uwsgi/deploy.ini
+
+# 현재 파일을 실행하는 유저가 tmp 폴더의 소유자일 경우 명령이 복잡해짐...
+~ sudo -u deploy /home/ubuntu/.pyenv/versions/deploy_ec2/bin/uwsgi --ini .config_secret/uwsgi/deploy.ini
+
+# uwsgi가 실행 중인지 확인 - 아래 2개 파일이 존재하면 실행 중..
+/tmp/ec2.pid
+/tmp/ec2.sock
+```
+
+#### 서비스할 사이트 목록 정리 (sites-enable)
+
+```
+# 기본 설정을 삭제 (링크되어있는 파일)
+~ sudo rm /etc/nginx/sites-enable/default
+
+# 서비스할 ec2 파일의 Symbolic link 생성
+~ sudo ln -s ..sites-available/ec2 /etc/nginx/sites-enable/
+
+# 서비스 사이트 목록이 변경되었으므로 nginx 재시작
+~ sudo systemctl restart nginx
+```
+
+#### uWSGI 서비스 설정파일 작성 (시작 프로그램)
+
+- 현재 실행 방식으로는 쉘을 종료하면 uWSGI가 종료되므로 service 설정 파일을 작성한다.
+- 이 설정이 되어야 24시간 실행 됨..
+- nginx는 service 설정 필요 없음
+
+```
+~ sudo vi /etc/systemd/system/uwsgi.service
+```
+
+```
+# 아래 내용 작성
+
 [Unit]
 Description=uWSGI Emperor service
 After=syslog.target
 
 [Service]
-ExecPre=/bin/sh -c 'mkdir -p /run/uwsgi; chown nginx:nginx /run/uwsgi'
-ExecStart=/home/ubuntu/.pyenv/versions/mysite/bin/uwsgi --uid nginx --gid nginx --master --emperor /etc/uwsgi/sites
+ExecPre=/bin/sh -c 'mkdir -p /run/uwsgi; chown deploy:deploy /run/uwsgi'
+ExecStart=/home/ubuntu/.pyenv/versions/deploy_ec2/bin/uwsgi --uid deploy --gid deploy --master --emperor --ini /srv/deploy_ec2/.config_secret/uwsgi/deploy.ini
 
 Restart=always
 KillSignal=SIGQUIT
@@ -533,6 +598,16 @@ NotifyAccess=all
 
 [Install]
 WantedBy=multi-user.target
+```
+
+#### 참고
+
+```
+# uwsgi 시작
+~ sudo systemctl start uwsgi
+
+# uwsgi.service 상태(로그?) 확인
+~ sudo systemctl status uwsgi.service
 ```
 
 
