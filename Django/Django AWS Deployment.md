@@ -277,6 +277,272 @@ alias scp-ec2="delete-ec2 && scp-ec2-ori"
 ```
 
 
+```
+# 해당 쉘의 환경변수 확인
+$ env
+$ echo $DJANGO_SETTINGS_MODULE
+
+# DJANGO_SETTINGS_MODULE 환경변수 추가
+$ export DJANGO_SETTINGS_MODULE=config.settings.debug
+
+# migrate
+$ /managy.py migrate --settings=config.settings.debug
+
+# 이후부터는 아래 명령으로 실행 가능 
+$ /managy.py renserver
+```
+
+```
+# 터미널에서 새 탭을 열지 않고 변경 사항 적용
+
+$ source ~/.zshrc
+```
+
+### Nginx
+
+```
+# AWS에서 nginx user 설정
+$ sudo adduser nginx
+```
+
+### uWSGI 설치 (가상환경 안에서)
+
+```
+# AWS에서
+$ pip install uwsgi
+```
+
+### 프로젝트에서 wsgi 파일 분리
+
+```python
+# wsgi/debug.py
+import os
+from django.core.wsgi import get_wsgi_application
+
+# 환경변수 설정 (os.environ) config.settings.debug 값 적용
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.debug")
+application = get_wsgi_application()
+
+
+# wsgi/deploy.py
+import os
+from django.core.wsgi import get_wsgi_application
+
+# 환경변수 설정 (os.environ) config.settings.deploy 값 적용
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.deploy")
+application = get_wsgi_application()
+```
+
+### uwsgi 실행
+
+```
+# uwsgi --http :8000 --home (virtualenv경로) --chdir (django프로젝트 경로-소스루트) -w (wsgi 설정파일)
+
+# local에서  확인
+$ uwsgi --http :8000 --home /usr/local/var/pyenv/versions/deploy_ec2 --chdir /Users/Joe/projects/django/deploy_ec2/django_app -w config.wsgi.debug
+
+# AWS에서
+$ uwsgi --http :8000 --home ~/.pyenv/versions/deploy_ec2 --chdir /srv/deploy_ec2/django_app -w config.wsgi.deploy
+```
+
+### uwsgi를 실행할 설정파일을 만든다.
+
+- local에서 테스트 중...
+
+```
+# .config_secret/uwsgi/debug.ini
+[uwsgi]
+home = /usr/local/var/pyenv/versions/deploy_ec2
+chdir = /Users/Joe/projects/django/deploy_ec2/django_app
+# or
+chdir = $(HOME)/projects/django/deploy_ec2/django_app
+module = config.wsgi.debug
+http = :8000
+
+# 실행하려면
+$ uwsgi --ini .config_secret/uwsgi/debug.ini
+```
+
+- AWS에서...
+
+```
+# .config_secret/uwsgi/deploy.ini
+[uwsgi]
+home = /usr/local/var/pyenv/versions/deploy_ec2
+chdir = /Users/Joe/projects/django/deploy_ec2/django_app
+module = config.wsgi.deploy
+http = :8000
+
+# 실행하려면
+$ uwsgi --ini .config_secret/uwsgi/deploy.ini
+```
+
+### 프로젝트에 사용중인 static file을 지정한 폴더에 모아주는 명령
+
+- static URL을 따로 설정 (base.py에서는 삭제 후)
+- git으로 관리하지 않는다.(프로젝트에 만들어진 파일이 아님)
+- 필요할때 collectstatic 하면 다시 생김
+- 프로젝트에 만들어진 static 파일은 'static'폴더에 저장
+- collectstatic 하면 'static' 파일도 모임
+
+```
+# settings/debug.py에 추가
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
+
+# 터미널에서
+$ ./manage.py collectstatic --settings=config.settings.debug
+
+# 프로젝트 내부에 static_root 폴더가 생기고 static file들이 모임
+
+# settings/base.py에 추가 (내가 만든 static 파일을 저장할 폴더)
+STATIC_DIR = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [
+    STATIC_DIR,
+    ]
+```
+
+### Nginx 설치, 설정 (local)
+
+```
+# install nginx
+$ brew install nginx
+
+# 실행
+$ nginx
+
+# 실행 상태 확인
+$ ps -ax | grep nginx
+
+# nginx 종료
+$ nginx -s stop
+```
+
+- 설정파일 : '/usr/local/etc/nginx/nginx.conf'
+- 기본 html 위치 : '/usr/local/Cellar/nginx/1.12.0_1/html'
+- localhost:8080으로 접속했을때 처음 열리는 html : '/usr/local/Cellar/nginx/1.12.0_1/html/index.html'
+
+### Nginx 설치, 설정 (AWS)
+
+#### Nginx 안정화 최신버전 사전세팅 및 설치
+
+```
+sudo apt-get install software-properties-common python-software-properties
+sudo add-apt-repository ppa:nginx/stable
+sudo apt-get update
+sudo apt-get install nginx
+# 버전 확인 
+nginx -v
+```
+
+#### user 추가
+
+```
+$ sudo adduesr [username]
+```
+
+#### Nginx 동작 User 변경
+
+```
+$ sudo vi /etc/nginx/nginx.conf
+
+user [username];
+
+server_names_hash_bucket_size 250;
+```
+
+#### AWS Console에서 80 포트를 열어줌
+
+- Security Group에서 DeployEC2 그룹의 Inbound rule에 HTTP 추가
+
+#### Nginx 내부 가상 서버
+
+- nginx는 내부 가상버서를 돌려서 여러 도메일을 개별적으로 처리 가능
+
+```
+/sites-available 
+site a
+site b
+site c
+site d
+
+/sites-enable (서비스 중지, 파일은 보관)
+(symbolic link)site a
+(symbolic link)site d
+```
+
+
+server {
+			listen 80;
+			server_name ec2-13-124-12-223.ap-northeast-2.compute.amazonaws.com;
+			charset utf-8;
+			client_max_body_size 128M;
+			
+			location / {
+			uwsgi_pass		unix:///tmp/ec2.sock;
+			include			uwsgi_params;
+			}
+}
+
+#### http 요청 처리 방식
+
+- EC2 (http) (WSGI) -> Django
+- EC2 (http) uWSGI (WSGI) -> Django
+- EC2 (http) Nginx -> (UnixSocket) -> uWSGI (WSGI) -> Django
+
+
+
+
+$ sudo -u deploy /home/ubuntu/.pyenv/versions/deploy_ec2/bin/uwsgi --ini .config_secret/uwsgi/deploy.ini
+
+
+$ uwsgi --ini .config_secret/uwsgi/deploy/ini
+
+
+$ sudo rm default
+$ sudo ln -s ..sites-available/ec2 
+
+# uwsgi nginx 재시작
+$ sudo systemctl restart uwsgi nginx
+
+# uwsgi 시작
+$ sudo systemctl start uwsgi
+
+# uwsgi.service 상태(로그?) 확인
+$ sudo systemctl status uwsgi.service
+
+
+#### uWSGI 서비스 설정파일 작성
+
+$ sudo vi /etc/systemd/system/uwsgi.service
+
+```
+[Unit]
+Description=uWSGI Emperor service
+After=syslog.target
+
+[Service]
+ExecPre=/bin/sh -c 'mkdir -p /run/uwsgi; chown nginx:nginx /run/uwsgi'
+ExecStart=/home/ubuntu/.pyenv/versions/mysite/bin/uwsgi --uid nginx --gid nginx --master --emperor /etc/uwsgi/sites
+
+Restart=always
+KillSignal=SIGQUIT
+Type=notify
+StandardError=syslog
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target
+```
+
+
+
+
+
+
+
+
+
 
 
 
