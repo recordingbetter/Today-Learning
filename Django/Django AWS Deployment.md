@@ -241,6 +241,9 @@ AWS Access Key ID [None]: 만든 유저 키
 AWS Secret Access Key [None]: 만든 유저 키
 Default region name [None]: ap-northeast-2
 Default output format [None]: json
+
+# 새로 지정할때,
+~ aws configure --profile [aws 키의 이름]
 ```
 
 #### Pillow 라이브러리 설치
@@ -989,7 +992,7 @@ docker images
 ~ docker ps
 
 # 실행 중인 컨테이너에 접속
-~ docker exec -it [실행중인 컨테이너 이름] /bin/zsh
+~ docker exec -it [실행중인 컨테이너 가이름] /bin/zsh
 ```
 
 ### Supervisor
@@ -1015,4 +1018,134 @@ command = nginx
 [program:uwsgi]
 command=/root/.pyenv/versions/deploy_eb_docker/bin/uwsgi --ini /srv/deploy_eb_docker/.config/uwsgi/uwsgi-app.ini
 ```
+
+
+
+
+
+### 장고 환경 설정
+
+- 쉘 단위로 적용됨. (터미널 탭마다 다르게 할 수 있음)
+- runserver 등 할때 settings 값 안줘도 됨
+
+```
+$ export DJANGO_SETTINGS_MODULE=config.settings.deploy
+```
+
+
+
+## AWS RDS 사용
+
+### DRS 인스턴스 만들기
+
+### 장고 프로젝트에서 디비 셋팅
+
+### migrate - deploy
+
+### postgrespl db에 접속하여 확인
+
+```
+$ psql --host=deploy-eb-rds.chuejjlksokd.ap-northeast-2.rds.amazonaws.com --port=5432 --username=recordingbetter --dbname=eb_database
+
+# 테이블 리스트
+\dt
+
+# 종료
+\q
+```
+
+### .requirements/deploy.py에 추가
+
+```
+psycopg2<2.8
+```
+
+### admin css 적용을 위해 collectstatic 추가
+
+- .static_root 폴더 이동, .gitignore에 추가
+
+```
+# config/settings/deploy.py
+- STATIC_ROOT = os.path.join(ROOT_DIR, '.static_root')
+```
+
+### member app
+
+- member app 추가
+- AbstractUser를 상속받은 MyUser 모델을 생성
+- migration을 위해 기존 테이블들을 초기화
+
+```
+$ ./manage.py migrate [name] zero 
+
+# 처음 django project를 만들때 user model을 정해주지 않으면 django에서 자동으로 User 모델을 만들어 다른 앱들과 연결시켜두기 때문. 이 연결 전으로 되돌려 migrate 해야한다.
+```
+
+- migrate 하여 확인
+
+```
+$ ./manage.py migrate
+$ ./manage.py showmigrations
+```
+
+- static_root, media 경로 셋팅
+- 
+
+
+
+
+
+# Python shell에서 AWS S3 생성하기
+
+- 생성 전에 AWS IAM에서 User에 S3 FullAccess 권한 부여
+
+In [1]: import boto3
+
+In [2]: session = boto3.Session()
+
+In [4]: client = session.client('s3')
+
+In [6]: client.create_bucket(Bucket='deploy-eb-docker-joe', CreateBucketConfiguration={'LocationConstraint
+   ...: ': 'ap-northeast-2'})
+Out[6]:
+{'Location': 'http://deploy-eb-docker-joe.s3.amazonaws.com/',
+ 'ResponseMetadata': {'HTTPHeaders': {'content-length': '0',
+   'date': 'Wed, 05 Jul 2017 07:43:47 GMT',
+   'location': 'http://deploy-eb-docker-joe.s3.amazonaws.com/',
+   'server': 'AmazonS3',
+   'x-amz-id-2': 'l/sksWwOWVn7189meEYxnXuXtQ4G7JpXi8Fw5dXVVfX6qS+gy2wYWXdKBcqIag00PWnldsSvilA=',
+   'x-amz-request-id': 'E902BCC379765CA0'},
+  'HTTPStatusCode': 200,
+  'HostId': 'l/sksWwOWVn7189meEYxnXuXtQ4G7JpXi8Fw5dXVVfX6qS+gy2wYWXdKBcqIag00PWnldsSvilA=',
+  'RequestId': 'E902BCC379765CA0',
+  'RetryAttempts': 0}}
+
+
+
+docker none 이미지 삭제
+docker rmi $(docker images -f "dangling=true" -q)
+
+
+docker tag <ori> <make>
+
+pip install awsebcli
+
+eb init
+eb create
+
+eb deploy
+
+오류 확인
+eb ssh
+cat /var/log/eb-activity.log
+
+
+ebingnore
+
+!.config_secret/
+
+eb open
+
+
+2c05
 
