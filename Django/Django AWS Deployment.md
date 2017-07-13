@@ -856,7 +856,7 @@ README.md  django_app/  requirements.txt
 
 ### 서버 환경을 자동으로 셋팅하기 위한 도커 파일 생성
 
-- 로컬 deploy_ec2 폴더에 dockerfile 이름으로 도커파일 생성
+- 로컬 deploy_ec2 폴더에 Dockerfile 이름으로 도커파일 생성
 
 ```
 # ubuntu 설치
@@ -959,10 +959,10 @@ EXPOSE      80 8000
 # docker build -t <사용할 이미지 이름> <프로젝트 경로> -f <dockerfile이 존재하는 경로>
 
 # 바뀌지 않을 ubuntu 기본 설정 이미지
-$ docker build -t eb_ubuntu . -f .dockerfiles/dockerfile.ubuntu
+$ docker build -t eb_ubuntu . -f .dockerfiles/Dockerfile.ubuntu
 
 # 바뀔 수 있는 설정의 이미지
-$ docker build -t eb . -f .dockerfiles/dockerfile
+$ docker build -t eb . -f .dockerfiles/Dockerfile
 ```
 
 - 도커 이미지 실행
