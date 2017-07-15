@@ -999,3 +999,13 @@ class MyPerson(Person, ExtraManagers):
 #### mix-in
  
 - 타임스탬프 믹스인은 created_timestamp, modified_timestamp를 가짐
+
+
+
+
+### UserCreationForm 사용하기
+
+[문서](https://docs.djangoproject.com/en/1.11/topics/auth/customizing/#custom-users-and-the-built-in-auth-forms) 
+
+- AbstractUser를 상속받아 User model을 생성했을때 Signup 등에 UserCreationForm을  사용할 수 있다.
+
