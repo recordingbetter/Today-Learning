@@ -23,12 +23,23 @@ $ pip install 'celery[redis]'
 
 django signal dispatcher
 
+#### redis 설치
 
+```
 $ brew install redis
-실행
-$ redis-server
+```
 
+#### redis 실행
+
+```
+$ redis-server
+```
+
+#### celery 실행
+
+```
 $ celery -A config worker -l info
+```
 
 AWS ElastiCashe
 -> Celery 사용
