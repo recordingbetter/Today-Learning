@@ -65,11 +65,72 @@ class AboutView(FormView):
 - form_valid() 함수 : 유효한 폼 데이터로 처리할 로직 코딩, 반스시 super() 함수 호출.
 
 
+##### 참고문서 http://unifox.tistory.com [Python Django]
+
+
+## generic view 사용 예
+
+- 'name' 필드 하나만 가지는 WorkOut 모델이 있음.
+
+```python
+# views.py
+
+from django.views.generic import ListView, DetailView
+
+class WorkOut(ListView):
+	model = WorkOut
+	
+class WorkOutDetail(DetailView):
+    model = WorkOut
+```
+
+```python
+# urls.py
+
+from django.conf.urls import url
+from .views import WorkOutList, WorkOutDetail
+
+urlpatterns = [
+    url(r'^$', WorkOutList.as_view()),
+    url(r'^(?P<pk>\d+)/$', WorkOutDetail.as_view(), name='detail'),
+]
+```
+
+```html
+<!-- workout/workout_list.html -->
+
+<body>
+    {% for li in object_list %}
+        <p>
+            <a href="{% url 'detail' li.pk %}">
+                {{ li.name }}
+            </a>
+        </p>
+    {% endfor %}
+
+</body>
+```
+
+```html
+<!-- workout/workout_detail.html -->
+<body>
+    {{ object.name }}
+</body>
+```
+
+- ListView는 자동으로 object\_list라는 컨텍스트 변수를 생성한다.
+- DetailView는 자동으로 object라는 컨텍스트 변수를 생성한다.
+- html 파일 이름은 꼭 저렇게 써야한다. (모델명의 소문자\_detail 또는 모델명의 소문자\_list)
+
+  
+  
+- 기타 여러가지 View 클래스가 있음. [참고 : 장고 제네릭뷰](https://docs.djangoproject.com/en/1.11/ref/class-based-views/generic-editing/#createview)
+
+
+	
 
 
 
-##### 참고문서
 
-- http://unifox.tistory.com [Python Django]
 
 	
