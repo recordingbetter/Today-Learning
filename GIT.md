@@ -578,11 +578,46 @@ $ git reset [커밋 체크섬] [파일이름]		//명시된 커밋에서 파일 �
 
 
 
+# 브랜치 추적
+
+- 리모트 트래킹 브랜치를 로컬 브랜치로 Checkout 하면 자동으로 "트래킹(Tracking) 브랜치"가 만들어진다 (트래킹 하는 대상 브랜치를 "Upstream 브랜치" 라고 부른다). 트래킹 브랜치는 리모트 브랜치와 직접적인 연결고리가 있는 로컬 브랜치이다. 트래킹 브랜치에서 git pull 명령을 내리면 리모트 저장소로부터 데이터를 내려받아 연결된 리모트 브랜치와 자동으로 Merge 한다.  
+  
+- 서버로부터 저장소를 Clone을 하면 Git은 자동으로 master 브랜치를 `origin/master` 브랜치의 트래킹 브랜치로 만든다. 트래킹 브랜치를 직접 만들 수 있는데 리모트를 `origin`이 아닌 다른 리모트로 할 수도 있고, 브랜치도 `master`가 아닌 다른 브랜치로 추적하게 할 수 있다. `git checkout -b [branch] [remotename]/[branch]` 명령으로 간단히 트래킹 브랜치를 만들 수 있다. `--track` 옵션을 사용하여 로컬 브랜치 이름을 자동으로 생성할 수 있다.  
 	
+```
+$ git checkout --track origin/serverfix
 
+Branch serverfix set up to track remote branch serverfix from origin.
+Switched to a new branch 'serverfix'
+```
 
+- 이 명령은 매우 자주 쓰여서 더 생략할 수 있다. 입력한 브랜치가 있는 (a) 리모트가 딱 하나 있고 (b) 로컬에는 없으면 Git은 트래킹 브랜치를 만들어 준다.
 
+```
+$ git checkout serverfix
 
+Branch serverfix set up to track remote branch serverfix from origin.
+Switched to a new branch 'serverfix'
+```
+
+- 리모트 브랜치와 다른 이름으로 브랜치를 만들려면 로컬 브랜치의 이름을 아래와 같이 다르게 지정한다.
+
+```
+$ git checkout -b sf origin/serverfix
+
+Branch sf set up to track remote branch serverfix from origin.
+Switched to a new branch 'sf'
+```
+
+- 이제 sf 브랜치에서 Push 나 Pull 하면 자동으로 `origin/serverfix`로 데이터를 보내거나 가져온다.
+
+이미 로컬에 존재하는 브랜치가 리모트의 특정 브랜치를 추적하게 하려면 git branch 명령에 `-u`나 `--set-upstream-to` 옵션을 붙여서 아래와 같이 설정한다.
+
+```
+$ git branch -u origin/serverfix
+
+Branch serverfix set up to track remote branch serverfix from origin.
+```
 
 
 
