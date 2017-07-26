@@ -1,10 +1,20 @@
 # GIT
+
 버전 관리 도구
 
 ### 버전 관리
+
 - 작업을 진행하면서 변경, 수정 이력을 관리
 
+### 버전 관리 시스템을 사용하는 이유
+
+- 무언가 잘 못되었을때 복구할 수 있다.
+- 프로젝트 진행 중 어느 지점으로 돌아갈 수 있다.
+- 여러사람이 같은 프로젝트에 있을때 소스코드를 공유할 수 있다.
+- 소스코드를 누가 수정했는지 추적 할 수있다.- 소스코드의 변경 사항 추적을 통해 의미를 추론 할 수 있다.
+
 ### GIT의 목표
+
 - 빠른 속도
 - 단순한 구조
 - 비선형적인 개발 (동시 다발적인 브랜치)
@@ -12,6 +22,7 @@
 - Linux 커널같은 대형 프로젝트에도 유용할 것
 
 ### GIT의 기초
+
 - 버전 간의 차이를 기록하는 것이 아니라 각 버전의 스냅샷을 기록
 	- 속도가 빠르다
 	- 용량이 크다
@@ -31,6 +42,13 @@
 - Staging Area : commit할 파일에 대한 정보를 저장
 - Git directory : commit한 파일의 스냅샷 정보를 저장
 
+### 저장소
+
+- 사용자가 변경한 모든 내용을 추적하는 공간
+- 저장소를 은행 계좌로 비유할 수 있다.
+	- 저장소의 이력 -> 거래내역
+	- 커밋 -> 입금/출금 내역
+
 ## GIT 최초 설정
 
 1. `/etc/gitconfig` 파일: 시스템의 모든 사용자와 모든 저장소에 적용되는 설정이다. `git config --system` 옵션으로 이 파일을 읽고 쓸 수 있다.
@@ -41,7 +59,7 @@
 
 #### 사용자 정보 설정
 
-한번만 설정하면 됨
+- 최초 한번만 설정하면 됨
 
 ```terminal
 $ git config --global user.name "이름"
@@ -68,6 +86,11 @@ $ git help
 
 ## GIT 저장소 만들기 (로컬)
 
+#### Index / Working Tree
+
+- Index : 새 커밋이 되기 직전의 단계 (stage area)
+- Working Tree : 현재 작업하고 있는 파일
+
 #### 버전 관리할 디렉토리에서 git 저장소를 만들고 초기화
 
 ```
@@ -85,6 +108,7 @@ $ git add [file name]
 ```
 $ git status
 ```
+
 버전 관리 중인 디렉토리의 파일들의 상태를 보여줌.
 
 #### 파일의 상태
@@ -225,9 +249,18 @@ $ git push [리모트 저장소 단축이름] [브랜치]
 
 #### 기존 저장소를 복사 clone
 
+- 리모트, 로컬 모두 가능
+
 ```
-$ git clone [url]
+$ git clone [url] [생성할 드렉토리이름]
 ```
+
+#### fork / clone / pull request
+
+- 리모트 저장소를 fork하면 리모트에 저장소가 생긴다. 
+- 그 리모트 저장소를 clone하면 로컬에 저장소가 생긴다.
+- pull하면 clone했던 리모트 저장소에 업데이트된다.
+- 원본에 push를 하고 싶으면 pull request 한다.
 
 #### 리모트 저장소 이름 바꾸기 rename
 
@@ -259,6 +292,7 @@ $ git push origin --tags			//여러개의 태그 푸시
 
 - 태깅 후에 푸시. 그냥 푸시로는 안됨.
 - 저장소(github)의 release 리스트에 있음. 링크 제공
+
 
 ## Git 브랜치
 
@@ -618,6 +652,31 @@ $ git branch -u origin/serverfix
 
 Branch serverfix set up to track remote branch serverfix from origin.
 ```
+
+### subtree / submodule
+
+### getrrit code review
+
+- 코드 리뷰 사이트.
+- 안드로이드 프로젝트가 사용 중
+- 대기업에들 사용한다
+- 서브밋
+
+### hooks
+
+- commit 등 특정 이벤트에 자동으로 실행되는 스크립트
+- .git 폴더에 샘플들이 들어있음. 사용시 .sample 삭제
+
+### 코드 작성, 수정 완료 후
+
+```
+$ git fetch$ git merge origin master
+# 여기에서 conflict를 잡아주고 가야함. 없으면 이득 
+# 그리고 반드시 테스트!!!
+$ git push
+```
+
+
 
 
 
