@@ -43,6 +43,7 @@
 
 
 ### REST API 정보제공 방식
+
 * XML
 * JSON
 * RSS
