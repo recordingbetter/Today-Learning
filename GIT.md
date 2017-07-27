@@ -676,6 +676,11 @@ $ git fetch$ git merge origin master
 $ git push
 ```
 
+### redis
+
+- 메모리 db
+- 파일시스템을 사용하지 않아 빠르다
+- 세션 관리할때 사용
 
 
 
