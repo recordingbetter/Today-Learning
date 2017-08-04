@@ -87,7 +87,26 @@ custom management commands
 
 management/commands/[command name].py
 
+### EB 내부의 Docker에 접속
 
+```
+# eb에 접속
+$ eb ssh
+
+# 실행 중인 docker 이미지 확인
+$ sudo docker ps
+
+# 실행 중인 컨테이너에 접속
+$ docker exec -it [실행중인 컨테이너 이름] /bin/zsh
+```
+
+### migrations 파일 위치 확인
+```
+$ find . -path "\*/migrations/\*.py"
+```
+
+
+2017-08-03 10:54:01.302724
 
 
 
